@@ -1,0 +1,153 @@
+# Dependencies
+node_modules/
+
+# Build output. Vercel and friends build from source, so this is never committed.
+dist/
+dist-ssr/
+build/
+*.local
+
+# Tooling caches
+.vite/
+.turbo/
+.cache/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# Alternative package managers. package.json carries a pnpm.overrides block, so
+# someone may run pnpm here even though package-lock.json means npm today.
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# Playwright artifacts. The MCP browser writes screenshots, DOM snapshots and
+# console logs into .playwright-mcp/ on almost every run.
+.playwright-mcp/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Playwright saved auth state. HIGHEST RISK ITEM IN THIS FILE.
+# storageState files hold live session cookies and bearer tokens. Committing one
+# hands over a logged-in session to anyone with repo access. Never commit these.
+playwright/.auth/
+**/.auth/
+storage-state.json
+*storageState*.json
+
+# Other QA tooling output, since this stack runs Playwright, Cypress, Postman and
+# Newman. All generated, none belongs in git.
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+newman/
+allure-results/
+allure-report/
+coverage/
+.nyc_output/
+
+# NOTE, deliberately NOT ignored: Playwright visual baselines, which live in
+# tests/**/*-snapshots/. Those are committed on purpose. They are the expected
+# result a visual test compares against, so ignoring them breaks the test.
+# test-results/ above is the run OUTPUT and is correctly ignored. Do not confuse
+# the two.
+
+# Deployment platform linking. Contains project and org IDs.
+.vercel/
+.netlify/
+.firebase/
+
+# Credentials and keys. Belt and braces: none of these should ever exist here,
+# and if one appears by accident it must not be committable.
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+*.crt
+!public/**/*.key
+
+# Environment and secrets. Never commit a real one.
+.env
+.env.*
+!.env.example
+
+# Claude Code machine-local settings. The shared CLAUDE.md IS committed, this is
+# per-machine config and should not be.
+.claude/settings.local.json
+
+# Editor and OS noise
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+.AppleDouble
+.LSOverride
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.history/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Merge and patch leftovers
+*.orig
+*.rej
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---------------------------------------------------------------------------
+# Personal data. Read the note below before changing either of these.
+# ---------------------------------------------------------------------------
+
+# Contains Foyez's mobile number (line 22). Excluded so it cannot leak through a
+# public repo. If this repo is private and you want the file versioned, delete
+# this line. If you would rather commit it, remove the mobile number first.
+/cv-data.txt
+
+# Internal build plan and decision log. Excluded for credibility, not privacy.
+# It records candid working notes that would undermine the site if a recruiter
+# browsed the repo: which radar scores are unconfirmed drafts rather than Foyez's
+# own assessment, which certificate entry is a guess, which agent is the weakest
+# of the three, and where the CV undersells him. All useful internally, all
+# damaging out of context.
+#
+# If this repo is private, delete this line. The decision log is worth
+# versioning when only Foyez can read it.
+/portfolio-change-plan.txt
+
+# Working copy of the source CV. Redundant: the served copy the site actually
+# links to lives at public/Foyez-Ullah-Kabir-SQA-Engineer-CV.pdf and IS
+# committed, because the Download Resume button depends on it.
+#
+# WARNING: that served PDF contains a home address and a mobile number. It is
+# downloadable by anyone who visits the site, whatever this file says. Publishing
+# a redacted resume is the fix, not gitignore.
+/CV_*.pdf
+
+# Note on what is deliberately NOT ignored:
+#   public/                served assets, including the resume PDF
+#   public/certificates/   certificate images shown on the site
+#   package-lock.json      commit this, it pins the dependency tree
+#   CLAUDE.md              project rules. Kept committed on purpose: it is the
+#                          standard shared config for Claude Code, it contains
+#                          no personal data, and its content reads as engineering
+#                          discipline rather than as anything to hide.
