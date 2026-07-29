@@ -44,91 +44,95 @@ const STEP_MS = 900;
 /** Pause on the completed run before looping back to the start. */
 const REPLAY_MS = 3200;
 
+/** Phase boundaries of one cycle, in ms from the start of the cycle. */
+const TYPING_ENDS = CMD.length * TYPE_MS;
+const RUN_ENDS = TYPING_ENDS + suites.length * STEP_MS;
+const CYCLE_MS = RUN_ENDS + REPLAY_MS;
+
+/**
+ * Derive the whole panel state from elapsed time.
+ *
+ * This is the reason the animation cannot get stuck. Every frame recomputes
+ * position from the clock instead of advancing a counter, so a frame that never
+ * arrives costs nothing: the next one lands on the correct state. There is no
+ * accumulated progress to lose and no gate that can be left closed.
+ */
+function phaseAt(elapsed: number) {
+  if (elapsed < TYPING_ENDS) {
+    return { typed: Math.min(CMD.length, Math.floor(elapsed / TYPE_MS)), resolved: 0 };
+  }
+  if (elapsed < RUN_ENDS) {
+    return {
+      typed: CMD.length,
+      resolved: Math.min(suites.length, Math.floor((elapsed - TYPING_ENDS) / STEP_MS)),
+    };
+  }
+  return { typed: CMD.length, resolved: suites.length };
+}
+
 export function TestRunPanel() {
-  // Characters of CMD typed so far.
-  const [typed, setTyped] = useState(0);
-  // Number of suites that have finished. suites[resolved] is the one running.
-  const [resolved, setResolved] = useState(0);
+  const [{ typed, resolved }, setPhase] = useState({ typed: 0, resolved: 0 });
   const [still, setStill] = useState(false);
   // Transient: the Enter keycap held down at the moment the command fires.
   const [pressed, setPressed] = useState(false);
-  // False while the tab is hidden or the panel is scrolled out of view.
-  const [active, setActive] = useState(true);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  /*
-    Without this the run loops forever whether or not anyone can see it, which
-    burns cycles off-screen and, worse, means a visitor returning to a
-    backgrounded tab finds the panel parked mid-cycle looking broken. Chrome
-    throttles timers hard in hidden tabs, so the panel can sit frozen for a
-    while before catching up.
-
-    Paused when hidden or off-screen, and restarted from the beginning when it
-    comes back, so the animation is always seen from the top.
-  */
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-
-    let onScreen = true;
-    const sync = () =>
-      setActive(onScreen && document.visibilityState === "visible");
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        onScreen = entry.isIntersecting;
-        sync();
-      },
-      { threshold: 0.2 },
-    );
-    io.observe(el);
-    document.addEventListener("visibilitychange", sync);
-
-    return () => {
-      io.disconnect();
-      document.removeEventListener("visibilitychange", sync);
-    };
-  }, []);
-
-  // Replay from the top whenever the panel becomes visible again.
-  useEffect(() => {
-    if (!active || still) return;
-    setTyped(0);
-    setResolved(0);
-  }, [active, still]);
+  /** Start of the current cycle. Rewinding this is what restarts the run. */
+  const cycleStart = useRef(0);
 
   // A visitor who asked for reduced motion gets the finished run immediately,
   // with no typing and no loop.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setStill(true);
-      setTyped(CMD.length);
-      setResolved(suites.length);
+      setPhase({ typed: CMD.length, resolved: suites.length });
     }
   }, []);
 
-  // One timer drives all three phases: type the command, resolve the suites,
-  // then hold on the result before restarting.
-  useEffect(() => {
-    if (still || !active) return;
+  /*
+    One rAF loop drives everything, and it is deliberately stateless: it reads
+    the clock and derives the phase, rather than stepping a counter forward.
 
-    let delay = REPLAY_MS;
-    let next = () => {
-      setTyped(0);
-      setResolved(0);
+    Why this replaced a chain of setTimeouts gated on an `active` flag: that
+    design paused on tab-hidden and off-screen via visibilitychange and an
+    IntersectionObserver, and any gate like that can be left closed. If the flag
+    went false and the event that should reopen it never arrived, the panel sat
+    frozen with no way to recover. Reported twice as "not auto running, stilled".
+
+    This version has no gate and nothing to get out of sync:
+
+    - Browsers already stop firing rAF in a hidden tab, so backgrounding pauses
+      the animation for free, with no listener to miss.
+    - On return, elapsed time has jumped past the end of the cycle, so the very
+      next frame restarts cleanly from the top.
+    - Throttled or dropped frames self-correct, because position is a function of
+      the clock rather than a sum of past ticks.
+
+    The trade-off, accepted knowingly: it keeps animating while scrolled
+    off-screen, which the IntersectionObserver used to avoid. That cost is a few
+    cheap frames. Never freezing matters more than never working off-screen.
+  */
+  useEffect(() => {
+    if (still) return;
+
+    cycleStart.current = performance.now();
+    let raf = 0;
+
+    const tick = () => {
+      let elapsed = performance.now() - cycleStart.current;
+      if (elapsed >= CYCLE_MS) {
+        // Rewind rather than accumulate, so long gaps cannot drift the phase.
+        cycleStart.current = performance.now();
+        elapsed = 0;
+      }
+      const next = phaseAt(elapsed);
+      setPhase((prev) =>
+        prev.typed === next.typed && prev.resolved === next.resolved ? prev : next,
+      );
+      raf = requestAnimationFrame(tick);
     };
 
-    if (typed < CMD.length) {
-      delay = TYPE_MS;
-      next = () => setTyped((t) => t + 1);
-    } else if (resolved < suites.length) {
-      delay = STEP_MS;
-      next = () => setResolved((r) => r + 1);
-    }
-
-    const timer = setTimeout(next, delay);
-    return () => clearTimeout(timer);
-  }, [typed, resolved, still, active]);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [still]);
 
   const started = typed >= CMD.length;
   const done = started ? Math.min(resolved, suites.length) : 0;
@@ -148,12 +152,13 @@ export function TestRunPanel() {
   const rerun = () => {
     if (still) {
       // Reduced motion: jump straight to the finished run, never a blank panel.
-      setTyped(CMD.length);
-      setResolved(suites.length);
+      setPhase({ typed: CMD.length, resolved: suites.length });
       return;
     }
-    setTyped(0);
-    setResolved(0);
+    // Rewinding the clock is the whole restart. The rAF loop picks it up next
+    // frame, so there is no second code path that could disagree with the first.
+    cycleStart.current = performance.now();
+    setPhase({ typed: 0, resolved: 0 });
   };
 
   const failedTests = settled.reduce((n, s) => n + (s.failed ?? 0), 0);
@@ -166,10 +171,7 @@ export function TestRunPanel() {
   const failedPct = (failedTests / TOTAL_TESTS) * 100;
 
   return (
-    <div
-      ref={rootRef}
-      className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl p-6 backdrop-blur-sm shadow-2xl shadow-blue-500/10"
-    >
+    <div className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl p-6 backdrop-blur-sm shadow-2xl shadow-blue-500/10">
       {/* Glow effect */}
       <div className="absolute -inset-1 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-50" />
 

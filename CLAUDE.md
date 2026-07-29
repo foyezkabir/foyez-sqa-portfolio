@@ -135,9 +135,10 @@ Hard requirements:
 
 - Honour `prefers-reduced-motion: reduce`. Skip to the end state, no loop.
 - Animate `transform` and `opacity` only. Never animate layout properties.
-- **Pause work nobody can see.** Loops stop when the tab is hidden or the
-  element is off-screen, and replay from the start on return. A loop running in
-  a background tab burns cycles and looks frozen when the visitor comes back.
+- **Derive looping animation state from the clock, never from accumulated
+  ticks,** and never gate it on a flag an event has to reopen. See R12: an
+  earlier version paused on `visibilitychange` and `IntersectionObserver` and
+  froze twice. Backgrounding already pauses rAF for free.
 - Never delay the first paint of the headline.
 - Do not add an animation library for one effect. A hand-rolled rAF lerp cost
   1.9kB where framer-motion cost 44kB gzipped for the same tilt.
@@ -187,7 +188,60 @@ Hard requirements:
 
 ---
 
-## R12. Commits carry no co-author trailer
+## R12. Known cross-cutting hazards. Check these after ANY change
+
+Some changes here have broken things in a completely different part of the
+project. Each of these has actually happened. After touching config, tooling, or
+anything global, re-verify the two items below before calling the work done.
+
+**Never gate an animation on a flag that an event has to reopen.**
+The hero test-run panel froze twice, reported as "not auto running, stilled".
+Cause both times: the loop was gated on an `active` flag set by
+`visibilitychange` and an `IntersectionObserver`. If the flag went false and the
+reopening event never arrived, it stayed frozen with no path back.
+The fix, and the rule: derive animation state from the clock, not from
+accumulated ticks. `TestRunPanel` computes its phase from
+`performance.now() - cycleStart` every frame, so a dropped or throttled frame
+costs nothing because the next frame lands on the correct state. Browsers already
+stop firing rAF in hidden tabs, so backgrounding pauses for free with no listener
+to miss. Verified by blocking the main thread for 6s: it recovers on the very
+next frame.
+Do not reintroduce off-screen pausing. A few cheap frames is a better trade than
+a panel that can wedge.
+
+**`server.watch.ignored` in vite.config.ts can break asset serving.**
+An earlier version globbed `['**/*.txt', '**/*.pdf', '**/*.md']` to stop planning
+documents triggering page reloads. That silently broke every certificate PDF:
+Vite keeps a cached set of `public/` files that it updates from watcher events,
+so a PDF added after server start was never registered and requests fell through
+to the SPA fallback, returning `index.html` with `content-type: text/html`.
+Production was unaffected, which is exactly what made it hard to spot.
+Name specific files there. Never glob by extension.
+
+**Verify after any config or tooling change:**
+
+```bash
+npm run build
+```
+
+```js
+// In the browser. Both must hold.
+(async () => {
+  const pdf = await fetch('/certificates/istqb-ctfl.pdf');
+  console.log('pdf served:', pdf.headers.get('content-type') === 'application/pdf');
+  const a = document.body.innerText.match(/Run complete|Waiting|Running/)?.[0];
+  await new Promise(r => setTimeout(r, 6000));
+  const b = document.body.innerText.match(/Run complete|Waiting|Running/)?.[0];
+  console.log('hero panel advancing:', a !== b);
+})()
+```
+
+A green `npm run build` proves nothing about either of these. Both failures
+shipped with a passing build.
+
+---
+
+## R13. Commits carry no co-author trailer
 
 - **Never add `Co-Authored-By: Claude ...` to a commit in this repo.** No
   AI-assistance trailers, footers, or "generated with" lines either.
@@ -199,7 +253,7 @@ Hard requirements:
 
 ---
 
-## R13. One module at a time
+## R14. One module at a time
 
 - `portfolio-change-plan.txt` sets the order. Build one module, verify it, stop,
   report. Do not batch modules.

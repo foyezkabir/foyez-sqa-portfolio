@@ -36,10 +36,18 @@ export default defineConfig({
 
   server: {
     watch: {
-      // cv-data.txt and portfolio-change-plan.txt are planning documents, not
-      // source. Without this, editing them triggers a full page reload in any
-      // open browser tab, which restarts the hero animation for no reason.
-      ignored: ['**/*.txt', '**/*.pdf', '**/*.md'],
+      // These two are planning documents, not source. Without this, editing them
+      // triggers a full page reload in any open browser tab, which restarts the
+      // hero animation for no reason.
+      //
+      // Named explicitly rather than globbed by extension, and that matters.
+      // An earlier version used ['**/*.txt', '**/*.pdf', '**/*.md'], which broke
+      // asset serving: Vite keeps a cached set of public/ files and updates it
+      // from watcher events, so any PDF added after server start was never
+      // registered and requests for it fell through to the SPA fallback,
+      // returning index.html instead of the file. Production was unaffected,
+      // which is exactly what makes that class of bug easy to miss.
+      ignored: ['**/cv-data.txt', '**/portfolio-change-plan.txt'],
     },
   },
 })
