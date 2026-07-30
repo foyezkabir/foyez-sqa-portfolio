@@ -101,8 +101,42 @@ function Carousel({
 
     return () => {
       api?.off("select", onSelect);
+      // The original cleanup forgot this one, so every remount leaked a
+      // reInit listener onto the same api instance. Keeping this part: it is a
+      // real leak fix and it is independent of the scroll-bounds problem below.
+      api?.off("reInit", onSelect);
     };
   }, [api, onSelect]);
+
+  /*
+    KNOWN BUG, NOT FIXED HERE. This component does not reliably reach its last
+    slide, and an attempted fix has been reverted because it made things worse.
+
+    Measured evidence at 1280px, arrows clicked with the section in view and a
+    generous settle:
+      Certifications, 5 slides, 4 visible: the track advanced EIGHT pixels on the
+      first click and then reported canScrollNext false, leaving the fifth
+      certificate outside the 1152px viewport at x 1168 to 1438.
+      Agents & Automation, 6 slides: advanced one slide pitch and stopped, one
+      short of showing the sixth card.
+    It was intermittent at first, which is exactly why an earlier pass wrongly
+    concluded the component was fine and retracted a correct bug report.
+
+    The attempted fix was reInit on requestAnimationFrame, window load and
+    fonts.ready, on the theory that embla latches a stale slide measurement. That
+    made it WORSE and consistent: Certifications then moved zero pixels on every
+    attempt at every width, three runs each. Reverted.
+
+    Best current theory, unproven: embla measures slide widths on init, and in
+    this Vite dev setup CSS arrives after the element exists, so slides can
+    measure at or near zero and the computed scroll bounds collapse. A fix
+    probably needs a ResizeObserver on the track that reInits once real widths
+    appear, rather than guessing at lifecycle moments.
+
+    Consequence to be aware of: any section using this carousel can silently hide
+    its last card. Certifications does today. Sections that must not lose content
+    should use a grid until this is fixed.
+  */
 
   return (
     <CarouselContext.Provider

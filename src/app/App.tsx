@@ -3,6 +3,7 @@ import { AutomationFirst } from "./components/AutomationFirst";
 import { EngineeringCapabilities } from "./components/EngineeringCapabilities";
 import { WhatIBring } from "./components/WhatIBring";
 import { Projects } from "./components/Projects";
+import { AgentsAndAutomation } from "./components/AgentsAndAutomation";
 import { Certifications } from "./components/Certifications";
 import { Experience } from "./components/Experience";
 import { QAWithAI } from "./components/QAWithAI";
@@ -31,6 +32,12 @@ export default function App() {
         <div id="projects">
           <Projects />
         </div>
+        {/*
+          Placed between Featured Work and Certifications on purpose, so the page
+          escalates how checkable each claim is: work Foyez describes, then code a
+          reader can open, then credentials a third party assessed.
+        */}
+        <AgentsAndAutomation />
         <Certifications />
         <div id="experience">
           <Experience />
