@@ -1,5 +1,5 @@
-import { ExternalLink } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { Link } from "react-router";
 
 /**
  * Three real roles, newest first. Every claim traces to cv-data.txt.
@@ -84,7 +84,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
  * The `projects` chips carry the names the bullets have no room for. Card 3 has
  * none and renders without the row, rather than with an empty one.
  */
-const experiences = [
+/*
+  EXPORTED because the /projects page in Module 6 lists the same ten Shadhin
+  products with the same one-line summaries and the same links. Two copies of that
+  list would be two things to keep in step, and the ten-project count has already
+  had to move twice in one afternoon. One array, one place to change it.
+*/
+export const experiences = [
   {
     role: "SQA Engineer",
     company: "TulipTech",
@@ -118,18 +124,24 @@ const experiences = [
         url: "",
         summary:
           "A multi-tenant pharmacy ERP and telehealth platform: FEFO inventory under DGDA compliance, POS, and separate doctor and customer portals.",
+        tags: [],
+        platforms: [],
       },
       {
         name: "LolerFlow",
         url: "",
         summary:
           "A multi-tenant SaaS platform for UK LOLER lifting-equipment inspection: assets, defects, certificates, audit packs and a simPro integration.",
+        tags: [],
+        platforms: [],
       },
       {
         name: "StretchSense MDM",
         url: "",
         summary:
           "An enterprise XR device management platform for centralised device management, security and scalability.",
+        tags: [],
+        platforms: [],
       },
       // The only TulipTech project with a link in the CV PDF.
       {
@@ -137,6 +149,8 @@ const experiences = [
         url: "https://empathika.com/",
         summary:
           "An AI-powered care home management platform covering medication, care planning, HR and compliance.",
+        tags: [],
+        platforms: [],
       },
     ],
   },
@@ -199,15 +213,22 @@ const experiences = [
       {
         name: "Purbachol Water Supply",
         url: "https://www.rajukpws.com/",
-        summary: "An automated water billing management system.",
+        summary:
+          "Water supply portal for Purbachal New Town, run by RAJUK with United Delcot Water Limited: new connection applications, account transfers, billing and rates, and a complaints channel.",
+        tags: ["Utility billing", "Customer portal", "Complaints handling", "Government utility"],
+        platforms: ["Web"],
       },
       {
         name: "Quran with Maryam",
         url: "https://www.maryamandfatima.com/",
         // Condensed from the CV's 160-character original, which is the longest
-        // project line on the whole document and too long for a tooltip.
+        // project line on the whole document. It was shortened when these
+        // summaries were tooltips; it stays shortened because the /projects rows
+        // read better at this length too.
         summary:
-          "A mobile and web platform for listening to and learning the Quran and Dua, and for hiring knowledgeable individuals for Islamic events.",
+          "An online resource for studying the Quran and Dua, aimed at beginners and scholars alike, with interactive learning tools and the hiring of knowledgeable individuals for Islamic events.",
+        tags: ["Quran and Dua", "Learning platform", "Interactive tools", "Bookings"],
+        platforms: ["Web", "Android", "iOS"],
       },
       /*
         The two NRB products sit together because Foyez ranked them that way.
@@ -236,7 +257,9 @@ const experiences = [
         name: "NRB World",
         url: "https://apps.apple.com/app/id6474484953",
         summary:
-          "A business networking platform designed for Bangladesh's non-residents.",
+          "A social network for Bangladesh's non-residents: category-based circulation to reach a targeted audience, follows and recommendations, mentions and hashtags, and instant notifications.",
+        tags: ["Social networking", "Feeds and hashtags", "Push notifications", "Search and follow"],
+        platforms: ["Web", "Android", "iOS"],
       },
       {
         name: "NRBFS",
@@ -244,28 +267,41 @@ const experiences = [
         // Not from the CV. Taken from the app's own Play Store listing, which
         // describes it as a "trusted digital gateway for essential services".
         summary:
-          "NRB Family Support, a digital gateway for essential services.",
+          "NRB Family Support. A service coordination platform for non-resident Bangladeshis, covering document applications such as NID and passport renewal, travel, healthcare and property management.",
+        tags: ["Service coordination", "Document applications", "Healthcare and travel", "Property management"],
+        platforms: ["Web", "Android", "iOS"],
       },
       {
         name: "Billions for Bangladesh",
         url: "https://billionsforbangladesh.com/",
         summary:
-          "A platform with the aim of raising billions of dollars for Bangladesh.",
+          "A platform dedicated to empowering the people of Bangladesh through initiatives and programmes, with the stated aim of raising billions of dollars for the country.",
+        tags: ["Fundraising", "Programmes and initiatives"],
+        platforms: ["Web", "Android"],
       },
       {
         name: "Host-A-Akhor",
         url: "https://www.hostakkhor.com/",
-        summary: "A platform for storing old writings and voices.",
+        summary:
+          "A platform for storing old writings and voices.",
+        tags: ["Archive", "Writing and audio"],
+        platforms: ["Web", "Android", "iOS"],
       },
       {
         name: "Docadvisor",
         url: "https://www.docadvisor.xyz/",
-        summary: "A generative AI-based doctor recommendation system.",
+        summary:
+          "A generative AI doctor recommendation system: share symptoms at any hour and it points you to the best specialised doctor nearby.",
+        tags: ["Generative AI", "Symptom input", "Specialist matching", "Healthcare"],
+        platforms: ["Web"],
       },
       {
         name: "Looop Denki",
         url: "https://looop-denki.com/home/",
-        summary: "An electricity billing management system of Japan.",
+        summary:
+          "A Japanese electricity retailer: a tariff simulator, online signup in about five minutes, automatic bill discounts, and no contract lock-in or cancellation fee.",
+        tags: ["Electricity retail", "Tariff simulation", "Online signup", "Japan"],
+        platforms: ["Web"],
       },
       // The two without links land last, which is a useful side effect of the
       // ranking rather than the reason for it: the row now runs linked chips
@@ -279,11 +315,16 @@ const experiences = [
         // Foyez's own description. Not on the CV.
         summary:
           "Schedules and publishes social media posts to Facebook, Instagram and X.",
+        tags: ["Social scheduling", "Facebook, Instagram, X"],
+        platforms: [],
       },
       {
         name: "Black Pigeon HR",
         url: "",
-        summary: "A platform to make the hiring process easy. Ongoing.",
+        summary:
+          "A platform to make the hiring process easy. Ongoing.",
+        tags: ["Recruitment"],
+        platforms: [],
       },
     ],
   },
@@ -439,150 +480,89 @@ export function Experience() {
                   >
                     {exp.projects.map((project) => (
                       <li key={project.name}>
-                        {/*
-                          Every chip carries its one-line summary on hover AND on
-                          keyboard focus. Radix handles both, and wires
-                          aria-describedby from the trigger to the content, so a
-                          screen reader announces the summary rather than it being
-                          purely visual.
+                        {project.url ? (
+                          /*
+                            A chip is a link ONLY when it has a real URL. The
+                            unlinked ones render as a plain span with no pointer
+                            cursor and no icon, so nothing on this row looks
+                            pressable unless it goes somewhere.
 
-                          delayDuration 200 rather than the component default of
-                          0. With ten chips in a row, a zero delay fires a tooltip
-                          for every chip the cursor crosses on its way somewhere
-                          else, which flickers.
+                            The icon matters beyond decoration: it is the only
+                            non-hover signal telling a reader which chips are
+                            clickable. Colour alone would not survive a greyscale
+                            print or a colour-blind reader.
 
-                          KNOWN LIMITATION, stated rather than papered over: Radix
-                          deliberately does not open tooltips on touch, because a
-                          tap has to activate the link instead. So a phone user
-                          sees no summary. The text equivalent for them is the
-                          /projects page in Module 6, where these same
-                          descriptions are always-visible text rather than a
-                          hover. Until that page exists, touch users get the
-                          project name and the link, which is what they had
-                          before this change.
-                        */}
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger asChild>
-                            {project.url ? (
-                              /*
-                                A chip is a link ONLY when it has a real URL. The
-                                unlinked ones render as a span with no pointer
-                                cursor and no icon, so nothing on this row looks
-                                pressable unless it goes somewhere.
-
-                                The icon matters beyond decoration: it is the only
-                                non-hover signal telling a reader which chips are
-                                clickable. Colour alone would not survive a
-                                greyscale print or a colour-blind reader.
-
-                                no-underline is explicit and stays. Nothing
-                                underlines these today, because the Tailwind base
-                                layer makes an anchor inherit text-decoration
-                                rather than default to underline, but that is a
-                                reset detail rather than a decision. Foyez asked
-                                for no underline on a project name, so it is
-                                pinned here rather than left to depend on the
-                                reset surviving a Tailwind upgrade.
-                                hover:no-underline covers the hover state too,
-                                which a resting computed style would not catch.
-                              */
-                              <a
-                                href={project.url}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                aria-label={`${project.name}, opens in a new tab`}
-                                className="inline-flex items-center gap-1.5 px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80 no-underline transition-colors hover:text-foreground hover:border-blue-400/50 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
-                              >
-                                {project.name}
-                                <ExternalLink
-                                  className="h-3 w-3 shrink-0 opacity-60"
-                                  aria-hidden
-                                />
-                              </a>
-                            ) : (
-                              /*
-                                tabIndex 0 on a non-interactive span looks wrong at
-                                a glance, and is correct here. The ARIA tooltip
-                                pattern requires the trigger to be focusable, and
-                                without it a keyboard user could never read the
-                                summaries for the two chips that have no link.
-
-                                It does not turn the chip into a fake button: no
-                                pointer cursor, no icon, no href, nothing happens
-                                on Enter. What it gains is the same summary the
-                                other eight expose.
-                              */
-                              <span
-                                tabIndex={0}
-                                className="inline-block px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
-                              >
-                                {project.name}
-                              </span>
-                            )}
-                          </TooltipTrigger>
-                          {/*
-                            max-w-xs is load bearing. TooltipContent ships with
-                            w-fit and no cap, so the 137-character Quran with
-                            Maryam summary would render as one enormous single
-                            line straight off the side of the viewport.
-
-                            text-wrap:wrap overrides the text-balance that
-                            TooltipContent sets in its own base classes, and it is
-                            a fix rather than a preference.
-
-                            The box is w-fit capped at 320px, so its width is
-                            min(max-content, 320). text-balance then equalises line
-                            lengths, which shortens EVERY line, so text sat around
-                            165px to 230px inside a 320px box and left dead space
-                            down the right. Measured worst case: 56 percent filled.
-
-                            text-pretty was tried first and is NOT enough. It fixed
-                            the long summaries but Chrome still balances short
-                            two-line paragraphs to avoid a stubby last line, so
-                            "An automated water billing management system." still
-                            split into two 165px lines inside a 320px box.
-
-                            Plain greedy wrapping is what actually fills the box:
-                            each line runs to the cap, and a short summary that
-                            fits on one line makes w-fit shrink the box to hug it.
-
-                            IT HAS TO BE AN INLINE STYLE, not a class. Overriding
-                            with the arbitrary utility [text-wrap:wrap] was tried
-                            and silently failed: the declaration was generated into
-                            the CSS, but text-balance and text-wrap:wrap set the
-                            same property, both classes survived on the element,
-                            and Tailwind's own source order decided the winner.
-                            Computed style still read "balance". A class cannot
-                            reliably beat a class from the same layer, so the style
-                            attribute is used, which always wins. Verified by
-                            reading getComputedStyle rather than trusting the
-                            class list.
-
-                            Measured effect: worst dead space on any box went from
-                            131px to 46px, and the least-filled box from 56 percent
-                            to 84 percent.
-
-                            An explicit width:max-content was also tried here, to
-                            make short summaries hug instead of sitting in a 320px
-                            box. It changed the numbers by exactly nothing, because
-                            Radix's popper constrains the width itself, so it was
-                            removed rather than left in looking load bearing.
-
-                            The 46px worst case that remains is ordinary word wrap:
-                            the next word does not fit the leftover space, so it
-                            moves down. Short of hyphenation or justified text that
-                            is as tight as wrapped prose gets.
-                          */}
-                          <TooltipContent
-                            className="max-w-xs leading-relaxed"
-                            style={{ textWrap: "wrap" }}
+                            no-underline is explicit and stays. Nothing underlines
+                            these today, because the Tailwind base layer makes an
+                            anchor inherit text-decoration rather than default to
+                            underline, but that is a reset detail rather than a
+                            decision. Foyez asked for no underline on a project
+                            name, so it is pinned here rather than left to depend on
+                            the reset surviving a Tailwind upgrade.
+                            hover:no-underline covers the hover state too, which a
+                            resting computed style would not catch.
+                          */
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            aria-label={`${project.name}, opens in a new tab`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80 no-underline transition-colors hover:text-foreground hover:border-blue-400/50 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
                           >
-                            {project.summary}
-                          </TooltipContent>
-                        </Tooltip>
+                            {project.name}
+                            <ExternalLink
+                              className="h-3 w-3 shrink-0 opacity-60"
+                              aria-hidden
+                            />
+                          </a>
+                        ) : (
+                          /*
+                            No tabIndex. It used to carry tabIndex={0} so the ARIA
+                            tooltip pattern had a focusable trigger, and with the
+                            tooltips gone that would be a tab stop that does
+                            nothing on Enter. Removing it takes five inert stops
+                            out of the keyboard path.
+                          */
+                          <span className="inline-block px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80">
+                            {project.name}
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {/*
+                  THE REPLACEMENT FOR THE TOOLTIPS, and the reason this line exists
+                  at all. Every chip used to reveal its one-line summary on hover
+                  and on keyboard focus. That came out once /projects shipped,
+                  because the tooltip had become a strictly worse copy of it: one
+                  summary at a time, desktop only, and Radix deliberately never
+                  opens a tooltip on touch, so phone visitors had never seen a
+                  single one of them.
+
+                  What the tooltip did usefully was signal that there was more to
+                  know about these names. This line does that job in text, which
+                  works on every device and needs no hover, and it is the honest
+                  answer to "where did the descriptions go".
+
+                  Rendered per role rather than once for the section, so it sits
+                  directly under the names it refers to.
+                */}
+                {exp.projects.length > 0 && (
+                  /*
+                    A router Link, not an anchor. This stays inside the SPA, so it
+                    does not re-download and re-run the bundle to reach a page the
+                    visitor already has loaded.
+                  */
+                  <Link
+                    to="/projects"
+                    aria-label={`What each ${exp.company} project is, on the all projects page`}
+                    className="mt-4 inline-flex items-center gap-1.5 text-xs text-blue-400 no-underline transition-colors hover:text-blue-300 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded"
+                  >
+                    What each one is
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  </Link>
                 )}
               </div>
             </div>

@@ -70,22 +70,45 @@ function phaseAt(elapsed: number) {
   return { typed: CMD.length, resolved: suites.length };
 }
 
+/**
+ * Read once, at the first render, rather than in an effect. See the note in
+ * TestRunPanel for why that distinction was a real bug.
+ */
+function prefersReducedMotion() {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function TestRunPanel() {
-  const [{ typed, resolved }, setPhase] = useState({ typed: 0, resolved: 0 });
-  const [still, setStill] = useState(false);
+  /*
+    REDUCED MOTION IS RESOLVED IN THE STATE INITIALISERS, NOT IN AN EFFECT, and
+    that is the fix for a reported bug rather than a preference.
+
+    It used to be an effect: on mount it set `still` and jumped the phase to the
+    finished run. The trouble is that the first render had still = false, so the
+    rAF loop below started on that same commit. Both effects then ran, and the
+    loop got at least one tick in before its cleanup, computing phaseAt(elapsed
+    near zero) and writing {typed: 0, resolved: 0} straight over the finished
+    state. The loop was then cancelled, so nothing ever corrected it, and the
+    panel sat on "Waiting" with zero counters. A reduced-motion visitor saw a
+    widget that looked like it had never run, which is the opposite of what R8
+    asks for: skip to the END state, do not loop.
+
+    Resolved at first render instead, the loop never starts and there is no race
+    to lose. `still` is a plain initialiser rather than a listener, which also
+    keeps it clear of the R12 hazard: it is not a gate that some later event has
+    to reopen. An OS-level change mid-session is picked up on the next reload,
+    and until then the visitor is parked on the finished run, which is a correct
+    end state rather than a frozen start.
+  */
+  const [still] = useState(prefersReducedMotion);
+  const [{ typed, resolved }, setPhase] = useState(() =>
+    still ? { typed: CMD.length, resolved: suites.length } : { typed: 0, resolved: 0 },
+  );
   // Transient: the Enter keycap held down at the moment the command fires.
   const [pressed, setPressed] = useState(false);
   /** Start of the current cycle. Rewinding this is what restarts the run. */
   const cycleStart = useRef(0);
-
-  // A visitor who asked for reduced motion gets the finished run immediately,
-  // with no typing and no loop.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStill(true);
-      setPhase({ typed: CMD.length, resolved: suites.length });
-    }
-  }, []);
 
   /*
     One rAF loop drives everything, and it is deliberately stateless: it reads

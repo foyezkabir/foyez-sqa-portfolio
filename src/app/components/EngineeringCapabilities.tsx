@@ -105,7 +105,8 @@ export function EngineeringCapabilities() {
       
       <div className="max-w-5xl mx-auto relative z-10 space-y-12">
         <div className="text-center space-y-4">
-          <h2 className="text-5xl font-bold">
+          {/* Ramped in Module 11, along with every other section heading. */}
+          <h2 className="text-4xl sm:text-5xl font-bold">
             Engineering Capabilities
           </h2>
           <p className="text-lg text-muted-foreground">

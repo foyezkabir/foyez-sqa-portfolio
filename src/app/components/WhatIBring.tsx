@@ -49,13 +49,23 @@ export function WhatIBring() {
     <section className="px-8 py-32">
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
-          <h2 className="text-5xl font-bold">What I Bring</h2>
+          {/* Ramped in Module 11, along with every other section heading. */}
+          <h2 className="text-4xl sm:text-5xl font-bold">What I Bring</h2>
           <p className="text-lg text-muted-foreground">
             Engineering capabilities that improve team velocity and product quality
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/*
+          auto-rows-fr, found 2026-07-31 while verifying an unrelated change.
+
+          Without it the two grid rows size independently, so the four cards in one
+          grid were not the same height: measured 256px on the top row against 282px
+          on the bottom at 1280px. R3 asks for identical boxes across a grid, not
+          just across a row, and this is the exact "small big" mismatch Foyez
+          reported on Agents & Automation, which was fixed there and left here.
+        */}
+        <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 gap-8">
           {capabilities.map((capability) => {
             const Icon = capability.icon;
             return (
@@ -71,7 +81,32 @@ export function WhatIBring() {
                     <Icon className="w-7 h-7 text-blue-500" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-semibold">{capability.title}</h3>
+                    {/*
+                      A RAMP PLUS A RESERVE, and it needed both. Measured every 8px
+                      from 320 to 1920, not sampled.
+
+                      The break: at a flat text-2xl, "Automation Built to Last" fits
+                      one line from 856px while "Written for the Next Person" still
+                      needs two, so the two descriptions in that row started 32px
+                      apart inside cards of identical height.
+
+                      Holding text-xl until lg was tried first, on its own, because
+                      that alone fixed the same problem in ProjectCard. It is NOT
+                      enough here: these four titles are close in length and cross
+                      the wrap threshold at different points, so shrinking the type
+                      only moved the mismatch, from 856 to 1016 down to 768 to 808
+                      on the bottom row and 840 to 848 on the top row.
+
+                      So the ramp keeps the type honest and the reserve holds two
+                      lines of text-xl, 56px, through the md two-column range where
+                      the wrap is uneven. It is released at lg, where all four fit
+                      on one line at text-2xl and a reserve would only add
+                      whitespace. Below md the grid is a single column, so each card
+                      is its own row and parity cannot break.
+                    */}
+                    <h3 className="text-xl lg:text-2xl font-semibold md:min-h-[3.5rem] lg:min-h-0">
+                      {capability.title}
+                    </h3>
                     <p className="text-muted-foreground leading-relaxed">
                       {capability.description}
                     </p>

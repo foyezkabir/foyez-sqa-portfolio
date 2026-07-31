@@ -17,9 +17,18 @@ export const profile = {
   /** Lives in public/, so the filename is what lands in the reader's Downloads. */
   resumeUrl: "/Foyez-Ullah-Kabir-SQA-Engineer-CV.pdf",
 
-  /* Module 10 */
-  linkedinUrl: "",
-  githubUrl: "",
+  /*
+    MODULE 10. Both were empty, which meant the Contact section rendered the email
+    button alone and silently dropped the other two. Filled in now, so all three
+    appear.
+
+    THE PHONE NUMBER IS DELIBERATELY NOT HERE, and it is in cv-data.txt if it is
+    ever wanted. Email plus LinkedIn plus GitHub is the normal contact set for a
+    public page; a mobile number on one is an invitation to scrapers, and a
+    recruiter who wants to call will ask for it in the first reply anyway.
+  */
+  linkedinUrl: "https://www.linkedin.com/in/foyez-kabir/",
+  githubUrl: "https://github.com/foyezkabir",
 } as const;
 
 /**

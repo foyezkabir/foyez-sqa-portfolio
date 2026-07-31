@@ -2,11 +2,46 @@
 @import 'tailwindcss';
 @import './theme.css';
 
-html {
-  scroll-behavior: smooth;
+/**
+ * Smooth in-page anchor scrolling, gated on the media query.
+ *
+ * It used to be unconditional, which meant a visitor who asked for reduced motion
+ * still got an animated full-page scroll on every nav link. R8 says honour the
+ * preference and skip to the end state, and a page that slides several thousand
+ * pixels under someone who asked for no motion is the clearest possible breach of
+ * that. With the query, those visitors jump straight to the section.
+ *
+ * This also covers the hash handling in App.tsx, which calls scrollIntoView with
+ * no options precisely so that it inherits this rule rather than hardcoding one.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  /**
+   * Hides the native scrollbar on the scroll-snap slider in ui/carousel.tsx.
+   * The arrow buttons are that component's visible affordance, and a persistent
+   * 15px horizontal bar on Windows and Linux would eat into the card height the
+   * R3 parity checks measure against. Overlay scrollbars on macOS only appear
+   * mid-scroll, so hiding it costs nothing there either.
+   *
+   * The region stays keyboard reachable, because the scrolling element carries
+   * tabIndex 0 and the arrow keys are handled explicitly.
+   */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

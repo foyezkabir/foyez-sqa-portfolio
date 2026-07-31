@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Terminal prompt">
+  <!--
+    The same mark as the header lock-up: a blue rounded square with a terminal
+    prompt. SVG rather than ICO so one file covers every size, and it is the fix
+    for the only console error the page had, a 404 on /favicon.ico. Browsers
+    request that path automatically whenever no icon link is declared.
+
+    The blue is #2563eb, Tailwind's blue-600, which is what bg-blue-600 resolves
+    to on the header badge. Hardcoded here on purpose: an SVG served as a static
+    file cannot read the theme's custom properties.
+  -->
+  <rect width="32" height="32" rx="8" fill="#2563eb" />
+  <path
+    d="M9 11.5 12.5 15 9 18.5"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M15.5 20.5h7.5"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.4"
+    stroke-linecap="round"
+  />
+</svg>

@@ -1,4 +1,11 @@
-import { Code2, ExternalLink } from "lucide-react";
+import { RepoCard } from "./RepoCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
 
 /**
  * Six real public repositories. Every name, URL, description and stack label here
@@ -26,7 +33,7 @@ import { Code2, ExternalLink } from "lucide-react";
  *   without inventing it. That is why no Cypress repo appears here despite
  *   Cypress being a real skill: the evidence is thin, not the skill.
  */
-type Repo = {
+export type Repo = {
   name: string;
   url: string;
   description: string;
@@ -53,7 +60,8 @@ type Repo = {
   qualityReport?: { label: string; url: string };
 };
 
-const repos: Repo[] = [
+/* Exported for the /projects page, for the same single-source reason as `experiences`. */
+export const repos: Repo[] = [
   {
     name: "AG-QREW",
     url: "https://github.com/foyezkabir/AG-QREW",
@@ -121,194 +129,59 @@ export function AgentsAndAutomation() {
         </div>
 
         {/*
-          A carousel rather than a grid, and the reason is card size rather than
-          navigation.
+          A SLIDER, WHICH IS WHAT FOYEZ ASKED FOR TWICE.
 
-          As a 3-by-2 grid the six cards sat in TWO rows. A grid row stretches its
-          own cards to match each other, but the two rows size independently, so
-          row one and row two ended up different heights depending on how long
-          their descriptions ran. That is the "small big" Foyez saw.
+          It shipped as a grid instead, and the reason was a real bug rather than
+          a preference: the shared carousel could not reach its last slide, so a
+          slider here would have hidden one of six repositories. A section that
+          loses content is worse than a section that does not slide, so the grid
+          was the honest fallback while the component was broken.
 
-          A carousel puts all six in ONE flex row. Flex stretch then equalises
-          every card against the single tallest one, so a long summary and a short
-          summary produce identically sized cards by construction rather than by
-          luck. Same mechanism the Certifications section uses.
+          ui/carousel.tsx has since been rebuilt on CSS scroll-snap with no
+          JavaScript slide measurement anywhere, which removes that whole class of
+          bug rather than patching one instance of it. Re-verified here: all six
+          cards reach full visibility, three runs at each of 390, 800, 1024, 1280
+          and 1920.
 
-          Four visible at lg, so only two sit behind the arrows. That ratio is the
-          reason a carousel is honest here: hiding two of six is a real
-          affordance, where hiding four of six would be a place content goes to
-          die. Same call, and the same reasoning, as Certifications.
+          Three visible at lg, so two sit behind the arrows. That ratio is what
+          makes a slider honest here: hiding two of six is a real affordance,
+          where hiding four of six would be a place content goes to die. Same
+          call, and the same reasoning, as Certifications.
+
+          The equal-size requirement Foyez actually wanted is met more strongly
+          than the grid managed it. All six cards are now in ONE flex row, so
+          flex stretch equalises every card against the single tallest one by
+          construction. The grid needed auto-rows-fr to stop its two rows sizing
+          independently, which was the "small big" he first reported.
+
+          The card itself lives in RepoCard, because the /projects page in Module 6
+          renders the same six repositories. One copy of the card means the title
+          reserve, the underscore wrap rule and the stretched-link pattern cannot
+          drift apart between the two pages.
         */}
-        {/*
-          STILL A GRID, NOT A SLIDER, and Foyez asked for a slider twice. This is
-          the one thing in this module that is not what he requested, so the reason
-          needs to be plain.
+        <Carousel>
+          <CarouselContent className="-ml-8">
+            {repos.map((repo) => (
+              <CarouselItem
+                key={repo.name}
+                className="pl-8 basis-full sm:basis-1/2 lg:basis-1/3"
+              >
+                <RepoCard repo={repo} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
 
-          The carousel was built, and the shared component loses the last card.
-          Measured at 1280px with the section in view and generous settles, three
-          runs each:
-            Certifications, 5 slides: track advanced EIGHT pixels then reported
-            canScrollNext false, leaving the fifth certificate outside the 1152px
-            viewport at x 1168 to 1438.
-            This section, 6 slides: advanced one slide pitch and stopped, one short
-            of the sixth card.
-
-          A fix was attempted in ui/carousel.tsx, reInit on rAF, window load and
-          fonts.ready. It made things WORSE and consistent: Certifications then
-          moved zero pixels on every attempt at every width. Reverted, with the
-          evidence and the current theory recorded in that file.
-
-          So a slider here would ship a section that hides one of six repositories,
-          which is worse than a section that does not slide. The grid shows all six
-          with no interaction and cannot strand anything.
-
-          The equal-size requirement, which is what Foyez actually wanted, IS met:
-          auto-rows-fr forces every row to the same height. The original "small
-          big" was the two grid rows sizing independently, and that is fixed.
-
-          A NOTE ON MY OWN ERRORS HERE, because they cost real time. This bug was
-          intermittent at first and I retracted a correct report of it after one
-          clean run, then reinstated it once raw geometry showed the 8px travel.
-          Anything measured through embla needs repeated runs, not one.
-        */}
-        <div className="grid auto-rows-fr grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {repos.map((repo) => (
-              <div key={repo.name} className="relative group h-full">
-                  {/* Glow on hover only, matching the other card sections. */}
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-blue-600/20 to-purple-600/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
-
-                  {/*
-                    STRETCHED-LINK PATTERN, and it is required rather than clever.
-
-                    The card was a single <a> wrapping everything, which is the
-                    simplest thing that works until a card needs a SECOND link.
-                    One repo now links its SonarCloud report as well as GitHub, and
-                    an <a> inside an <a> is invalid HTML that browsers silently
-                    unnest, breaking both links.
-
-                    So the card is a div, and the GitHub link is an absolutely
-                    positioned overlay covering it. The whole card stays clickable
-                    and keeps its pointer cursor, while the quality-report link
-                    sits above the overlay on a higher z-index and wins its own
-                    clicks. Two real links, no nesting.
-
-                    focus-within on the card draws the ring, because the element
-                    receiving focus is now the invisible overlay rather than the
-                    visible box.
-
-                    h-full plus auto-rows-fr on the grid is what equalises the
-                    sizes.
-                  */}
-                  <div className="relative flex h-full flex-col gap-3 rounded-2xl border border-border bg-gradient-to-br from-secondary/50 to-secondary/30 p-6 backdrop-blur-sm transition-colors group-hover:border-blue-400/50 focus-within:ring-2 focus-within:ring-blue-400/60">
-                    <a
-                      href={repo.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      aria-label={`${repo.name} on GitHub, opens in a new tab`}
-                      className="absolute inset-0 z-10 rounded-2xl no-underline focus:outline-none hover:no-underline"
-                    />
-                    {/*
-                      ICON INLINE WITH THE NAME, at Foyez's request, matching the
-                      original design. An earlier pass moved it onto its own row to
-                      buy the title width, which he did not like.
-
-                      What buys the width back instead is dropping the decorative
-                      external-link icon that used to sit at the top right. It was
-                      never load bearing here: the entire card is a link, it has an
-                      aria-label saying it opens in a new tab, and the footer
-                      already carries an external-link icon on the one card with a
-                      second destination. Removing it returns about 22px to the
-                      title, which is what keeps long names to two lines.
-
-                      items-start with mt-0.5 on the icon, so the glyph sits on the
-                      first line of a two-line name rather than centring itself
-                      against the whole block.
-                    */}
-                    <div className="flex items-start gap-2">
-                      <Code2
-                        className="mt-0.5 h-5 w-5 shrink-0 text-blue-500"
-                        aria-hidden
-                      />
-                      {/*
-                        Reserved title box, THREE lines, sized to the measured worst
-                        case rather than the common one. Equal card heights alone
-                        are not enough: if one title is one line and another is
-                        three, the descriptions beneath start at different heights
-                        and the row reads ragged inside identical boxes.
-
-                        Two lines was tried and is not enough. At 1024px, where
-                        four cards share the width and each gets its narrowest,
-                        "playwright-api-automation-python" needs three lines while
-                        its neighbours need one, so a two-line reserve was overrun
-                        exactly where it mattered. The cost is some whitespace under
-                        short names on wide screens, which is the right trade for
-                        descriptions that always start on the same line.
-
-                        overflow-wrap:anywhere rather than break-words. Browsers
-                        break at hyphens but never at underscores, and break-word
-                        only breaks as a last resort, so
-                        "Teebay_buggy_automation" pushed past the card padding.
-                        "anywhere" also counts toward min-content sizing, which is
-                        what actually keeps it inside.
-                      */}
-                      <h3 className="min-h-[5.25rem] flex-1 text-base font-semibold leading-snug [overflow-wrap:anywhere]">
-                        {repo.name}
-                      </h3>
-                    </div>
-
-                    {/*
-                      flex-1 pushes the stack line to the bottom, so every
-                      footer sits on the same baseline however long the
-                      description is. Combined with the equal card heights, that
-                      is what makes a long summary and a short summary produce
-                      the same card.
-                    */}
-                    <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
-                      {repo.description}
-                    </p>
-
-                    <div className="flex items-center gap-2 text-xs text-foreground/70">
-                      {/*
-                        One accent colour for every dot, not a per-language
-                        palette. The reserved status tokens in theme.css include a
-                        blue, a green, an amber and a red, so a language palette
-                        would start colliding with state meaning. The language
-                        name is always written beside the dot, so the colour
-                        carries nothing on its own.
-                      */}
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-full bg-blue-500"
-                        aria-hidden
-                      />
-                      {repo.stack}
-
-                      {/*
-                        Renders only when a third-party report actually exists, so
-                        five of the six cards show nothing here rather than an
-                        empty slot or a placeholder. z-20 lifts it above the
-                        stretched GitHub overlay so this link receives its own
-                        clicks.
-                      */}
-                      {repo.qualityReport && (
-                        <a
-                          href={repo.qualityReport.url}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          aria-label={`${repo.qualityReport.label} for ${repo.name} on SonarCloud, opens in a new tab`}
-                          className="relative z-20 ml-auto inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/50 px-2 py-0.5 text-foreground/80 no-underline transition-colors hover:border-blue-400/50 hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
-                        >
-                          {repo.qualityReport.label}
-                          <ExternalLink
-                            className="h-3 w-3 shrink-0 opacity-60"
-                            aria-hidden
-                          />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-          ))}
-        </div>
+          {/*
+            Arrows centred below rather than the component default of 48px
+            outside the container, which would overflow the section's 32px
+            padding and clip on narrow screens. Centred below is safe at every
+            width and reachable on touch. Matches Certifications.
+          */}
+          <div className="flex items-center justify-center gap-3 pt-10">
+            <CarouselPrevious className="static translate-y-0" />
+            <CarouselNext className="static translate-y-0" />
+          </div>
+        </Carousel>
       </div>
     </section>
   );

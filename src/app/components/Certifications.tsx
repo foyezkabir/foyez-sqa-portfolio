@@ -4,6 +4,7 @@ import {
   ExternalLink,
   GraduationCap,
   ShieldCheck,
+  Terminal,
 } from "lucide-react";
 import {
   Carousel,
@@ -37,6 +38,7 @@ type Certification = {
  */
 const ISSUER_ICON: Record<string, typeof Award> = {
   ISTQB: BadgeCheck,
+  Anthropic: Terminal,
   Udemy: Award,
   "Alison / Udemy": ShieldCheck,
   "IT Training BD": GraduationCap,
@@ -46,10 +48,14 @@ const ISSUER_ICON: Record<string, typeof Award> = {
  * Credentials, assessed by a third party. Deliberately separate from the
  * capabilities radar above, which is self-scored against a published rubric.
  *
- * Five certificates in a carousel showing four at a time on desktop, so only one
- * sits behind the arrows. That ratio is the reason a carousel works here: hiding
- * one of five is a genuine affordance, where hiding three of four would be a
- * place content goes to die.
+ * Six certificates in a carousel showing four at a time on desktop, so two sit
+ * behind the arrows. That ratio is the reason a carousel works here: hiding two of
+ * six is a genuine affordance, where hiding three of four would be a place content
+ * goes to die. Same call, and the same reasoning, as Agents & Automation.
+ *
+ * It was five until "Claude Code in Action" was wired up on 2026-07-31. The asset
+ * had been sitting in public/certificates/ under an auto-generated filename,
+ * shipping to production and referenced nowhere.
  *
  * Clicking a card opens the PDF in a new tab, using the browser's own PDF viewer
  * for zoom, page navigation and print. Deliberately not an in-page iframe:
@@ -70,6 +76,33 @@ const certifications: Certification[] = [
       "The industry baseline for test engineering: test design techniques, the full test process, and test management.",
     image: "/certificates/istqb-ctfl.png",
     pdf: "/certificates/istqb-ctfl.pdf",
+  },
+  /*
+    SECOND, DIRECTLY AFTER ISTQB, and the pairing is the point.
+
+    ISTQB is the verifiable industry baseline, the claim that says "this person is
+    legitimate". This one is the differentiator: Anthropic's own course on the tool
+    every agent in Agents & Automation is built with. Baseline then differentiator
+    is the same order the hero chips use, and for the same reason: the credential
+    earns the right to lead with what is distinctive.
+
+    It is also the only certificate here that is NOT on the CV. Added to the CV gap
+    list in cv-data.txt, because the CV is the document recruiters keyword-filter
+    and "Claude Code" is exactly the term this one would be found by.
+
+    Title, issuer and recipient are read off the certificate itself, which is the
+    file the card links to. The summary deliberately does not describe a syllabus:
+    the certificate states completion and a course name and nothing about content,
+    so inventing modules would be filler. What it says instead is true and
+    checkable, and it is the fact that matters here anyway.
+  */
+  {
+    title: "Claude Code in Action",
+    issuer: "Anthropic",
+    summary:
+      "Anthropic's own course on Claude Code, the tool behind every agent in the Agents & Automation section above.",
+    image: "/certificates/claude-code-in-action.jpg",
+    pdf: "/certificates/claude-code-in-action.pdf",
   },
   {
     title: "Cypress: Web Automation Testing",
@@ -110,10 +143,31 @@ export function Certifications() {
     <section className="px-8 py-32">
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
-          <h2 className="text-5xl font-bold">Certifications &amp; Training</h2>
+          {/*
+            THE LONGEST HEADING ON THE SITE, AND IT WAS THE ONLY THING CAUSING
+            SUB-384px PAGE OVERFLOW. Isolated by shrinking each heading's font size
+            in turn and watching documentElement.scrollWidth: this one alone held
+            the whole document at a 369px minimum, so the page could be dragged
+            sideways at 320 and 360. The radar chart was blamed for this in an
+            earlier note and is innocent; its section is overflow-hidden and
+            hiding it changes the page minimum by nothing.
+
+            Ramped like every other heading, plus hyphens-auto, which is specific
+            to this one. "Certifications" is fourteen characters and measures about
+            312px at text-4xl, against 256px of content width at a 320px viewport,
+            so a ramp alone cannot fit it: the word is wider than the screen. Rather
+            than shrink this heading below the others and break the set, it is
+            allowed to hyphenate as a last resort. Hyphenation only engages when the
+            word genuinely does not fit, so from 375px up nothing changes, and
+            below that a hyphenated word is a far better outcome than a page that
+            scrolls sideways.
+          */}
+          <h2 className="text-4xl sm:text-5xl font-bold hyphens-auto">
+            Certifications &amp; Training
+          </h2>
           {/*
             This line is doing real work. The capabilities radar two sections up
-            is honest but still self-judged. These five were assessed by someone
+            is honest but still self-judged. These six were assessed by someone
             else, and saying so shows the author knows the difference between the
             two kinds of claim, which is the instinct a QA hire should have.
           */}
@@ -122,7 +176,12 @@ export function Certifications() {
           </p>
         </div>
 
-        <Carousel opts={{ align: "start" }}>
+        {/*
+          No alignment prop any more. The slider is CSS scroll-snap with
+          snap-start on every item, so start alignment is the layout rather than a
+          setting an implementation has to honour.
+        */}
+        <Carousel>
           <CarouselContent className="-ml-6">
             {certifications.map((cert) => {
               const Icon = ISSUER_ICON[cert.issuer] ?? BadgeCheck;
@@ -177,11 +236,29 @@ export function Certifications() {
 
                       <div className="space-y-1">
                         {/*
-                          Two lines reserved for every title, since some wrap and
-                          some do not. Without it the summary text starts at a
-                          different height on each card and the row reads ragged.
+                          Reserved title box, since some titles wrap and some do
+                          not. Without it the issuer line and the summary start at
+                          a different height on each card and the row reads ragged
+                          inside otherwise identical boxes.
+
+                          THE RESERVE IS PER BREAKPOINT, because the worst case is.
+                          Two lines is right up to lg. From lg the row holds four
+                          cards, so each one is at its narrowest, and at exactly
+                          1024px a card gets 218px with 178px of text width. That
+                          is enough for "ISTQB Certified Tester, Foundation Level
+                          4.0" to take THREE lines while the other four take two,
+                          measured 66px against 44px, which pushed that card's
+                          issuer and summary down by 22px.
+
+                          A single two-line reserve therefore could not hold at
+                          both ends of the range. The cost of the three-line
+                          reserve is about 22px of whitespace under the short
+                          titles on wide screens, which is the right trade for
+                          summaries that always start on the same line. Same call,
+                          and the same reasoning, as the title reserve in
+                          AgentsAndAutomation.
                         */}
-                        <h3 className="min-h-[2.75rem] text-base font-semibold leading-snug">
+                        <h3 className="min-h-[2.75rem] lg:min-h-[4.125rem] text-base font-semibold leading-snug">
                           {cert.title}
                         </h3>
                         <p className="flex items-center gap-1.5 text-xs text-blue-400">
