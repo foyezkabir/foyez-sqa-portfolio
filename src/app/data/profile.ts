@@ -9,9 +9,8 @@
 export const profile = {
   name: "Foyez Ullah Kabir",
   role: "SQA Engineer",
-  /** Leads the hero badge: the one claim a stranger can verify independently. */
+  /** The one claim a stranger can verify independently. */
   certification: "ISTQB-CTFL Certified",
-  yearsExperience: "3+ Years",
   email: "foyezkabir00@gmail.com",
 
   /** Lives in public/, so the filename is what lands in the reader's Downloads. */
@@ -32,12 +31,34 @@ export const profile = {
 } as const;
 
 /**
- * Badge line at the top of the hero.
- *
- * The name is deliberately absent: the fixed header lock-up already shows it
- * at every scroll position, and repeating it about 100px lower would waste the
- * slot on the credential.
+ * First professional QA role: the A1qa functional testing internship, which
+ * cv-data.txt and the Experience section both date to April 2023. Month is
+ * 0-indexed, so 3 is April.
  */
-export const heroBadge = `${profile.certification} · ${profile.role} · ${profile.yearsExperience}`;
+const CAREER_START = new Date(2023, 3, 1);
+
+/**
+ * Years of experience, DERIVED rather than typed.
+ *
+ * This was the string "3+ Years" sitting in the object above. It was accurate,
+ * and that is exactly the problem: April 2023 to August 2026 is 3 years 4
+ * months, so it read correctly and would have kept reading "3+" through April
+ * 2027, at which point the site would have been quietly understating him by a
+ * year with nothing to prompt an edit. A hardcoded duration is a fact with an
+ * expiry date on it.
+ *
+ * Floor, not round. "3+ years" has to stay true for the whole of year three, so
+ * 3 years 11 months is still 3+, and it only becomes 4+ on the anniversary.
+ *
+ * 365.25 days absorbs leap years. Exact calendar arithmetic is not worth it for
+ * a number that only changes once a year and is qualified with a plus sign.
+ */
+export function yearsOfExperience(now: Date = new Date()): number {
+  const MS_PER_YEAR = 365.25 * 24 * 60 * 60 * 1000;
+  return Math.floor((now.getTime() - CAREER_START.getTime()) / MS_PER_YEAR);
+}
+
+/** "3+ years", recomputed on every render so it cannot go stale. */
+export const experienceLabel = () => `${yearsOfExperience()}+ years`;
 
 export const mailtoHref = `mailto:${profile.email}`;

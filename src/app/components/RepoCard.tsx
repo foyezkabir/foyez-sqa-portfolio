@@ -57,18 +57,35 @@ export function RepoCard({ repo }: { repo: Repo }) {
         <div className="flex items-start gap-2">
           <Code2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" aria-hidden />
           {/*
-            Reserved title box, THREE lines, sized to the measured worst case
-            rather than the common one. Equal card heights alone are not enough: if
-            one title is one line and another is three, the descriptions beneath
-            start at different heights and the row reads ragged inside identical
-            boxes.
+            Reserved title box, TWO lines, sized to the measured worst case rather
+            than the common one. Equal card heights alone are not enough: if one
+            title is one line and another is two, the descriptions beneath start at
+            different heights and the row reads ragged inside identical boxes.
 
-            Two lines was tried and is not enough. At 1024px, where the cards are
-            at their narrowest, "playwright-api-automation-python" needs three
-            lines while its neighbours need one, so a two-line reserve was overrun
-            exactly where it mattered. The cost is some whitespace under short
-            names on wide screens, which is the right trade for descriptions that
-            always start on the same line.
+            THIS WAS THREE LINES AND THE THREE WAS STALE. The note it carried said
+            two lines was overrun at 1024px by
+            "playwright-api-automation-python". That was true when it was written
+            and stopped being true in the same pass that removed the decorative
+            external-link icon from the top right, which returned about 22px to the
+            title. Nothing re-measured it afterwards, so a 5.25rem reserve went on
+            holding 84px for content whose worst case is 44px, and Foyez reported
+            the leftover as too much gap.
+
+            Re-measured properly, by binary searching the narrowest box each name
+            still fits two lines in:
+
+              playwright-api-automation-python   162px   <- worst
+              InC-Automation-Selenium            139px
+              Teebay_buggy_automation            114px
+              the three short names               65px or less
+
+            The narrowest box this layout ever produces is 187px, at a 640px
+            viewport where the carousel is at basis-1/2. 187 against a 162
+            requirement leaves 25px of margin, so two lines holds at every width,
+            not just the four in the gate.
+
+            IF A LONGER REPO NAME IS EVER ADDED, re-run that measurement. A name
+            needing more than 187px for two lines silently overruns this box.
 
             overflow-wrap:anywhere rather than break-words. Browsers break at
             hyphens but never at underscores, and break-word only breaks as a last
@@ -76,7 +93,7 @@ export function RepoCard({ repo }: { repo: Repo }) {
             "anywhere" also counts toward min-content sizing, which is what
             actually keeps it inside.
           */}
-          <h3 className="min-h-[5.25rem] flex-1 text-base font-semibold leading-snug [overflow-wrap:anywhere]">
+          <h3 className="min-h-[2.75rem] flex-1 text-base font-semibold leading-snug [overflow-wrap:anywhere]">
             {repo.name}
           </h3>
         </div>

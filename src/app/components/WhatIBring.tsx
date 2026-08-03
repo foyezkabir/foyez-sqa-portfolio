@@ -46,7 +46,7 @@ const capabilities = [
 
 export function WhatIBring() {
   return (
-    <section className="px-8 py-32">
+    <section className="px-8 section-y">
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
           {/* Ramped in Module 11, along with every other section heading. */}

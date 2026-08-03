@@ -112,7 +112,7 @@ export const repos: Repo[] = [
 
 export function AgentsAndAutomation() {
   return (
-    <section className="px-8 py-32">
+    <section className="px-8 section-y">
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
           <h2 className="text-4xl sm:text-5xl font-bold">

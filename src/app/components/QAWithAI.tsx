@@ -64,7 +64,7 @@ const steps = [
 
 export function QAWithAI() {
   return (
-    <section className="px-8 py-32 relative overflow-hidden">
+    <section className="px-8 section-y relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 via-transparent to-blue-600/5" />
 

@@ -20,12 +20,54 @@
   }
 }
 
+/**
+ * Anchor landing offset, and it is a hard requirement of the section rhythm
+ * below rather than a nicety.
+ *
+ * The header is position:fixed and 69px tall, so it is outside flow and covers
+ * whatever the browser scrolls to the top of the viewport. That used to be
+ * hidden by accident: each section carried 128px of top padding, which was more
+ * than enough to keep a heading clear of the header. Cutting that padding to
+ * normalise the gaps removes the accident, so the clearance has to become
+ * explicit or every nav link lands with its heading tucked under the header.
+ *
+ * 5.5rem is the 69px header plus about 19px of breathing room. Set on html
+ * rather than as scroll-margin-top on each target, because the anchors are
+ * wrapper divs in HomePage.tsx and one declaration here covers all of them.
+ */
+html {
+  scroll-padding-top: 5.5rem;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 @layer utilities {
+  /**
+   * ONE vertical rhythm for every top-level section.
+   *
+   * Sections stack, so the gap a visitor sees between two of them is this value
+   * DOUBLED. That is what made the old py-32 read as a trench: 128px of bottom
+   * padding meeting 128px of top padding is 256px of dead space, measured, at
+   * every one of the nine section boundaries.
+   *
+   * It was also a single fixed value, so a 390px phone got the same 256px a
+   * 1920px desktop did. On a phone that is most of a screen height of nothing
+   * between one heading and the next.
+   *
+   * A shared class rather than the padding utilities repeated in ten
+   * components, because "normalised" has to be enforced by construction. Ten
+   * copies of the same string are ten chances for one section to drift on the
+   * next edit, which is how it would stop being normalised.
+   *
+   * Resolves to a 96px gap on phones, 128px from 640px up, 144px from 1024px up.
+   */
+  .section-y {
+    padding-block: 3rem;
+  }
+
   /**
    * Hides the native scrollbar on the scroll-snap slider in ui/carousel.tsx.
    * The arrow buttons are that component's visible affordance, and a persistent
@@ -43,5 +85,61 @@ body {
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/**
+ * The .section-y ramp. Kept outside @layer utilities on purpose: a bare class in
+ * the utilities layer loses to Tailwind's own responsive utilities in the same
+ * layer, and these need to win against nothing but themselves.
+ */
+@media (min-width: 640px) {
+  .section-y {
+    padding-block: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-y {
+    padding-block: 4.5rem;
+  }
+}
+
+/**
+ * HERO ONLY. Same bottom padding as .section-y, so the gap down to the next
+ * section stays on the shared rhythm, but a bigger top padding because the hero
+ * is the one section sitting under the fixed header.
+ *
+ * Why it needs its own class rather than .section-y plus a pt- utility: both
+ * would be single classes in the utilities layer, so which one won would depend
+ * on stylesheet order rather than on intent. A separate class declared after
+ * .section-y is unambiguous.
+ *
+ * The hero is min-h-screen with items-center, so its padding used to be inert:
+ * content shorter than the viewport just centred itself and the header was
+ * cleared by luck. Moving the TestRunPanel below the copy made the content
+ * TALLER than the viewport, at which point centring has no slack left and the
+ * content starts at padding-top. Foyez reported the result: the certification
+ * chip sat 17px under the header and looked cramped.
+ *
+ * 6.5rem is 104px, which is the 69px header plus 35px of air. The ramp adds more
+ * as the type gets bigger.
+ */
+.hero-y {
+  padding-top: 6.5rem;
+  padding-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .hero-y {
+    padding-top: 7.5rem;
+    padding-bottom: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-y {
+    padding-top: 8.5rem;
+    padding-bottom: 4.5rem;
   }
 }

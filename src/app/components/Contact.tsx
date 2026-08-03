@@ -31,7 +31,7 @@ import { mailtoHref, profile } from "../data/profile";
  */
 export function Contact() {
   return (
-    <section className="px-8 py-32">
+    <section className="px-8 section-y">
       <div className="max-w-4xl mx-auto">
         <div className="relative group">
           {/* Glow pulled back so the hero panel stays the brightest thing on the page. */}

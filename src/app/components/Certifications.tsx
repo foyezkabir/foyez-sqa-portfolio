@@ -140,7 +140,7 @@ const certifications: Certification[] = [
 
 export function Certifications() {
   return (
-    <section className="px-8 py-32">
+    <section className="px-8 section-y">
       <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
           {/*

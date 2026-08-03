@@ -39,6 +39,13 @@ export function HomePage() {
       */}
       <AgentsAndAutomation />
       <Certifications />
+      {/*
+        NO EDUCATION SECTION. It had one for part of a day and Foyez cut it: a
+        single degree under a 48px heading read too solo, which it did, because
+        three facts is not a section's worth of content. The degree now sits in
+        the hero identity block, where it belongs, next to the name and the role.
+        That also keeps this page on the nine sections the Figma structure defines.
+      */}
       <div id="experience">
         <Experience />
       </div>
