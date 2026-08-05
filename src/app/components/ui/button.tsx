@@ -9,6 +9,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        /*
+          Blue-600 is still the shared primary, used by the Contact section CTA.
+
+          The hero's View Work button does NOT use this colour: Foyez asked for
+          it white, scoped to the hero only, so that treatment lives in Hero.tsx
+          rather than here. Deliberately not promoted into this variant, because
+          a white default would turn every primary button on the site into a
+          white slab, including the one in the Contact section.
+
+          Contrast on this variant, measured against its white label:
+            blue-600  #155dfc  5.26:1  passes AA
+            blue-700  #1447e6  6.69:1  hover
+        */
         default: "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",

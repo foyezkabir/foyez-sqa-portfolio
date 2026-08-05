@@ -9,8 +9,110 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Foyez Ullah Kabir | SQA Engineer</title>
-      <meta name="description" content="Portfolio of Foyez Ullah Kabir, SQA Engineer with 3+ years of experience in test automation, API testing, and quality engineering." />
-      <meta name="robots" content="noindex, nofollow" />
+      <!-- NO YEAR COUNT IN ANY META DESCRIPTION. This read "with 3+ years of
+           experience" and that is a staleness bug hiding in plain sight.
+           profile.ts derives the years figure on every render precisely so the
+           visible page can never fall out of date; a hardcoded "3+" in a meta tag
+           reintroduces exactly that, and nobody would ever notice, because meta
+           tags do not render. It becomes wrong silently on the anniversary.
+
+           The og and twitter descriptions below were written with the same fault
+           and corrected in the same pass. -->
+      <meta name="description" content="Portfolio of Foyez Ullah Kabir, SQA Engineer. Test automation, API testing and quality engineering, with AI agents automating the repetitive work." />
+
+      <!-- INDEXING IS ON. This carried `noindex, nofollow` until Foyez was asked
+           about it, and nothing in portfolio-change-plan.txt explained why. It was
+           almost certainly a template leftover, and its effect was that searching
+           his own name could never surface this site. A portfolio built to be found
+           by recruiters should be findable. He confirmed removing it.
+
+           If the site ever needs hiding again, for a staging deploy or a rewrite in
+           progress, put the tag back rather than deleting the sitemap or the og
+           tags. Those serve different jobs and are still correct while hidden. -->
+
+      <!-- OPEN GRAPH AND TWITTER CARD. Absent entirely before this, so pasting the
+           URL into LinkedIn, WhatsApp or Slack rendered a bare row with no title,
+           no description and no image. For a portfolio distributed by link, that is
+           the first thing a recipient sees.
+
+           og:title is deliberately NOT the same string as <title>. The document
+           title is formatted for a browser tab, "Name | Role", where the pipe reads
+           as structure. A share card is a sentence in someone's feed, so it gets
+           prose instead.
+
+           TODO CONFIRM: og:url, og:image and the canonical link all need the real
+           deployed absolute URL. Foyez confirmed the site is not deployed yet, and
+           R5 forbids inventing a plausible-looking domain, so those three are left
+           commented rather than filled with a guess. A relative og:image does not
+           work: every crawler requires an absolute one.
+
+           TODO CONFIRM: no preview image exists yet. The largest asset in public/ is
+           favicon-512.png at 512x512, and social cards want 1200x630. A 512 square
+           renders letterboxed and cropped, which looks worse than no image, so
+           og:image stays out until real artwork exists. -->
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="Foyez Ullah Kabir" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:title" content="Foyez Ullah Kabir, SQA Engineer" />
+      <meta property="og:description" content="Automation-first quality engineering. Owning QA end to end, from test strategy to release sign-off, with a suite of AI agents doing the repetitive work." />
+      <!-- <meta property="og:url" content="TODO CONFIRM absolute site URL" /> -->
+      <!-- <meta property="og:image" content="TODO CONFIRM absolute URL to a 1200x630 image" /> -->
+      <!-- <meta property="og:image:alt" content="Foyez Ullah Kabir, SQA Engineer" /> -->
+
+      <!-- summary_large_image, not summary. The small card crops to a square thumb,
+           which suits a logo; a portfolio card is carrying a headline and wants the
+           wide format. It falls back to a text-only card cleanly while og:image is
+           still missing. -->
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Foyez Ullah Kabir, SQA Engineer" />
+      <meta name="twitter:description" content="Automation-first quality engineering. Owning QA end to end, from test strategy to release sign-off, with a suite of AI agents doing the repetitive work." />
+
+      <!-- <link rel="canonical" href="TODO CONFIRM absolute site URL" /> -->
+
+      <!-- PERSON STRUCTURED DATA. Lets a search engine understand this as a person
+           rather than a page of prose, which is what powers a knowledge panel for a
+           name query.
+
+           EVERY FIELD HERE TRACES TO cv-data.txt OR profile.ts, per R5. jobTitle,
+           the two sameAs URLs and the email are the same values the site renders.
+           alumniOf is North South University, cv-data.txt lines 344 to 348. The
+           ISTQB credential is the one third-party-assessed claim on the site.
+
+           NO url OR image KEY, deliberately, for the same reason as og:url: both
+           require an absolute address and there is not one yet. An incomplete
+           object is valid structured data; a wrong one is worse than none. -->
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Foyez Ullah Kabir",
+          "jobTitle": "SQA Engineer",
+          "email": "mailto:foyezkabir00@gmail.com",
+          "description": "SQA Engineer specialising in automation-first quality engineering, test strategy, API testing and AI agent tooling for QA workflows.",
+          "alumniOf": {
+            "@type": "CollegeOrUniversity",
+            "name": "North South University"
+          },
+          "hasCredential": {
+            "@type": "EducationalOccupationalCredential",
+            "name": "ISTQB Certified Tester Foundation Level 4.0",
+            "credentialCategory": "certification"
+          },
+          "knowsAbout": [
+            "Software Quality Assurance",
+            "Test Automation",
+            "API Testing",
+            "Playwright",
+            "Postman",
+            "TestRail",
+            "Requirement Analysis"
+          ],
+          "sameAs": [
+            "https://www.linkedin.com/in/foyez-kabir/",
+            "https://github.com/foyezkabir"
+          ]
+        }
+      </script>
       <!-- Declared explicitly, which is what stops the browser requesting
            /favicon.ico on its own. That 404 was the only console error on the
            page.

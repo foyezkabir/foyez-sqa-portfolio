@@ -32,7 +32,7 @@ import { mailtoHref, profile } from "../data/profile";
 export function Contact() {
   return (
     <section className="px-8 section-y">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="relative group">
           {/* Glow pulled back so the hero panel stays the brightest thing on the page. */}
           <div className="absolute -inset-1 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-3xl blur-lg opacity-20" />
@@ -77,7 +77,31 @@ export function Contact() {
               crossing the card padding at any width.
             */}
             <div className="flex flex-col items-stretch justify-center gap-4 md:flex-row md:items-center md:flex-wrap">
-              <Button size="lg" className="gap-2 whitespace-normal" asChild>
+              {/*
+                WHITE, MATCHING THE HERO'S VIEW WORK BUTTON, at Foyez's request.
+                These are the page's two primary calls to action, one at the top
+                and one at the bottom, so they should look like the same control.
+                Blue here and white there read as two different kinds of button.
+
+                The classes are duplicated from Hero rather than promoted into
+                buttonVariants, deliberately. A white default would repaint every
+                primary button on the site, and only these two should be white.
+                If a third ever needs it, extract it then, not now.
+
+                Contrast measured against the white label it replaces, resting
+                #ffffff on #0a0a0a is 19.8:1 and hover #e5e5e5 is 15.72:1.
+
+                The focus ring override is REQUIRED, not decorative. The shared
+                ring-ring/50 composites to about #2e2e2e and paints OUTSIDE the
+                fill, so on the near-black page it measured 1.46:1, well under the
+                3:1 a focus indicator needs. A dark ring only works on a dark
+                button. See the same note in Hero.tsx.
+              */}
+              <Button
+                size="lg"
+                className="gap-2 whitespace-normal bg-white text-neutral-950 hover:bg-neutral-200 hover:text-neutral-950 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                asChild
+              >
                 <a href={mailtoHref}>
                   <Mail className="w-4 h-4 shrink-0" aria-hidden />
                   {profile.email}

@@ -145,7 +145,23 @@ export function AutomationFirst() {
             reduced", "Scaled testing 10x", all recorded as sourceless in
             cv-data.txt line 423. No figure goes here without Foyez measuring one.
           */}
-          <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
+          {/*
+            WIDENED FROM 2xl TO 3xl, at Foyez's request to use the space, and it
+            stays centred under the heading rather than moving left.
+
+            2xl measured 672px, about 53 characters, which is narrow enough that
+            this three-sentence line ran to four wrapped rows inside a 1152px
+            section and left most of the width empty. 3xl is 768px, roughly 61
+            characters, which is comfortably inside the 45 to 90 range for prose
+            and takes a row out of the block.
+
+            It is NOT taken to the full section width. This is a centred
+            introductory line under a centred heading, and centred text needs a
+            tighter measure than left-aligned text: both edges are ragged, so a
+            long centred line is genuinely harder to track back. mx-auto keeps it
+            under the heading, which is what Foyez asked for.
+          */}
+          <p className="mx-auto max-w-3xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
             Not about writing more tests. It is a shorter path from a requirement
             to a filed issue. The agents absorb the test documentation and the
             execution runs, which is where the time used to go.
@@ -220,7 +236,12 @@ export function AutomationFirst() {
           because the tiles are the visual now and a second block competed with
           the row.
         */}
-        <p className="mx-auto max-w-3xl text-center text-sm sm:text-base text-muted-foreground leading-relaxed">
+        {/*
+          Widened from 3xl to 4xl for the same reason as the lead, and kept centred.
+          896px is about 84 characters at this smaller size, still inside the prose
+          range, and it drops this closing line from three rows to two.
+        */}
+        <p className="mx-auto max-w-4xl text-center text-sm sm:text-base text-muted-foreground leading-relaxed">
           The time that frees goes into the part a tool cannot do, deciding what is
           worth testing and whether a build is safe to release. That judgement
           stays with me, and it is what makes owning quality end to end practical

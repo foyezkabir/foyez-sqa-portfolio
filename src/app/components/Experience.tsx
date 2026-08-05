@@ -1,4 +1,4 @@
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 
 /**
@@ -161,12 +161,39 @@ export const experiences = [
     groups: [
       {
         title: null,
+        /*
+          TEN BULLETS, ONE PER CV BULLET. Foyez said many were missing and he was
+          right: this listed six against the CV's ten at lines 171 to 195, so four
+          responsibilities were simply absent.
+
+          What was missing, and why each one is worth the line:
+            UI/UX validation      cv line 181. The only bullet here about judging a
+                                  flow rather than executing against it.
+            Test plans and cases  cv line 184. Authoring, as distinct from the RTM
+                                  bullet, which is only about traceability.
+            Jira, Agile, Scrum    cv line 186. The most costly omission. Agile and
+                                  Scrum are standard recruiter filter terms and this
+                                  is the one place on the site that evidences them
+                                  against a real role and date range.
+            Ownership mindset     cv line 192. The only bullet about how he works
+                                  rather than what he produced.
+
+          ORDER IS THE CV'S ORDER, not a re-ranking, so the two can be diffed line
+          by line by anyone checking. The wording is condensed to match the voice of
+          this section, which states an action and stops, but no bullet adds a claim
+          the CV does not make. Compare against cv-data.txt before editing any of
+          them.
+        */
         bullets: [
           "Delivered QA across ten products on web and mobile.",
           "Covered requirement analysis through functional, regression, integration and UAT testing.",
           "Turned stakeholder conversations into structured SRS, STS and UIS documents.",
           "Maintained a Requirements Traceability Matrix (RTM) linking requirements to test cases and defects.",
+          "Reviewed UI and UX flows against business rules and usability standards, flagging gaps and recommending fixes.",
+          "Wrote and maintained test plans, test scenarios and requirement-linked test cases.",
+          "Tracked requirements, tasks and defects in Jira across Agile and Scrum sprints, from planning through stand-ups to retrospectives.",
           "Contributed to the Playwright, Cypress and Selenium automation effort and its CI execution.",
+          "Took ownership of quality risk, surfacing it early and working it through in hybrid and remote teams.",
           "Mentored QA interns on requirement analysis and documentation standards.",
         ],
       },
@@ -349,7 +376,7 @@ export const experiences = [
 export function Experience() {
   return (
     <section className="px-8 section-y">
-      <div className="max-w-5xl mx-auto space-y-16">
+      <div className="max-w-6xl mx-auto space-y-16">
         <div className="text-center space-y-4">
           {/*
             Ramps down at the narrow end per the responsiveness gate, and still
@@ -395,12 +422,30 @@ export function Experience() {
                   rather than left at full-strength foreground, so they punctuate
                   the list without competing with the text.
 
-                  max-w-3xl caps the reading measure. The card itself is 960px of
-                  usable width at desktop, and bullets were rendering 938px wide,
-                  which measured 121 characters on one line. That is well past the
-                  point where the eye reliably finds the start of the next line,
-                  and readability is the entire reason these are bullets rather
-                  than a paragraph. Capped, the longest sits around 91.
+                  THE MEASURE IS CAPPED, AND THE CAP MOVED FROM 3xl TO 5xl. Foyez
+                  pointed out that the bullets were leaving a wide empty gutter on
+                  the right and asked for the space to be used.
+
+                  He was right, and the cause was drift rather than a bad decision.
+                  This cap was solved when the card was 960px of usable width, and
+                  3xl's 768px put the longest line at about 91 characters, which was
+                  the target. Aligning every section to max-w-6xl widened the card to
+                  1152px, so the same 768px cap suddenly left 351px unused: 74
+                  characters of text beside a third of a card of nothing.
+
+                  5xl restores the ORIGINAL INTENT at the new card width. Measured
+                  against the rendered font rather than estimated: 1024px is about 92
+                  characters, which is the same measure the 960px card was tuned to,
+                  and roughly 40px still breathes before the padding.
+
+                  It is deliberately NOT uncapped. Full width measures about 104
+                  characters, past the point where the eye reliably finds the start of
+                  the next line, and readability is the entire reason these are
+                  bullets rather than a paragraph. Using the space is not the same as
+                  using all of it.
+
+                  IF THE SECTION CONTAINER WIDTH CHANGES AGAIN, re-derive this. The
+                  cap is a function of the card width, and it has now drifted once.
                 */}
                 <div className="mt-5 space-y-5">
                   {exp.groups.map((groupItem) => (
@@ -417,7 +462,7 @@ export function Experience() {
                           {groupItem.title}
                         </h4>
                       )}
-                      <ul className="space-y-2 list-disc pl-5 max-w-3xl marker:text-blue-400/70">
+                      <ul className="space-y-2 list-disc pl-5 max-w-5xl marker:text-blue-400/70">
                         {groupItem.bullets.map((bullet) => (
                           <li
                             key={bullet}
@@ -464,69 +509,104 @@ export function Experience() {
                     giving one layout that never reflows while resizing rather
                     than a row that reshuffles as the window moves.
 
-                    Current layout: TulipTech's four on one line, Shadhin's ten as
-                    3+3+4.
+                    THE CAP WAS RE-SOLVED AND RAISED, and this is the third time it
+                    has had to be. Foyez asked why the chips were bundled into a
+                    narrow block when the card has space to the right, and he was
+                    right: the row sat at 512px inside 928px of available card, so
+                    Shadhin's ten wrapped to three cramped lines beside empty space.
+
+                    Two things had changed since 512 was correct. Removing the
+                    outbound links took the external-link icon off every chip, so
+                    every chip got narrower, and the widths this cap is a function
+                    of all moved. Re-measured rather than assumed: Shadhin's ten now
+                    need 1219px on one line, TulipTech's four need 445px, gap 8px.
+
+                    RE-SOLVED ARITHMETICALLY ACROSS EVERY CAP FROM 440 TO 940, both
+                    chip sets, testing for a last row holding a single chip while
+                    another row holds more. Two orphan-free bands exist:
+
+                        448 to 572     Shadhin 4+4+2   (the old 512 lives here)
+                        676 to 940     Shadhin 5+5 to 7+3
+
+                    AND A REAL ORPHAN BAND BETWEEN THEM, 576 to 672, where Shadhin
+                    wraps 4+5+1 and strands Black Pigeon HR alone. That is exactly
+                    why this was solved rather than widened by eye: raising the cap
+                    to a comfortable-looking 640 would have shipped an R4 orphan.
+
+                    sm:max-w-lg is kept for the band between 640 and 1024, where the
+                    card itself is narrower and 512 is still the correct answer, so
+                    the cap steps up only once there is room for it. Below sm the
+                    column stack is unchanged.
+
+                    RE-SOLVED A THIRD TIME after every section container was aligned
+                    to max-w-6xl. That widened this card from 1024 to 1152, giving the
+                    row 1086px of usable width, and the previous lg:max-w-none let it
+                    use all of it: nine chips fitted on line one and Black Pigeon HR
+                    was stranded alone across every width from 1232 to 1920. The
+                    uncapped value was only ever safe while the card was narrower.
+
+                    Re-solved arithmetically over every cap from 440 to 1156:
+
+                        448 to 572      Shadhin 3+3+4
+                        676 to 1084     Shadhin 5+5 through 8+2
+                        1086 and up     Shadhin 9+1, orphan
+
+                    So the lg value is an explicit max-w-4xl, 896px, which gives 7+3
+                    and sits well inside the safe band rather than at its edge. 1084
+                    is the true ceiling; choosing 896 leaves headroom for a chip to be
+                    renamed a little longer without immediately tipping over.
 
                     THIS CAP IS TUNED TO THESE EXACT STRINGS and must be re-solved
-                    whenever a chip is added, renamed, or gains an icon. It has
-                    already survived one such change: adding postJini as a tenth
-                    chip and turning NRBFS into a link, which widened it by the
-                    external-link icon, moved the layout from 3+3+3 to 3+3+4 but
-                    left 512px valid. That was re-derived, not assumed.
+                    whenever a chip is added, renamed, gains an icon, loses one, or
+                    THE SECTION CONTAINER WIDTH CHANGES. It has now moved three times:
+                    adding postJini as a tenth chip and turning NRBFS into a link kept
+                    512 valid at 3+3+4, removing every link icon invalidated it, and
+                    widening the container invalidated it again.
                   */
                   <ul
                     aria-label={`Projects at ${exp.company}`}
-                    className="flex flex-col items-start gap-2 mt-5 sm:flex-row sm:flex-wrap sm:max-w-lg"
+                    className="flex flex-col items-start gap-2 mt-5 sm:flex-row sm:flex-wrap sm:max-w-lg lg:max-w-4xl"
                   >
                     {exp.projects.map((project) => (
                       <li key={project.name}>
-                        {project.url ? (
-                          /*
-                            A chip is a link ONLY when it has a real URL. The
-                            unlinked ones render as a plain span with no pointer
-                            cursor and no icon, so nothing on this row looks
-                            pressable unless it goes somewhere.
+                        {/*
+                          NAMES ONLY, NO OUTBOUND LINKS, at Foyez's instruction after
+                          he asked whether Experience needs the names or the links
+                          given /projects exists.
 
-                            The icon matters beyond decoration: it is the only
-                            non-hover signal telling a reader which chips are
-                            clickable. Colour alone would not survive a greyscale
-                            print or a colour-blind reader.
+                          MEASURED FIRST RATHER THAN ARGUED. All nine linked projects
+                          here appear on /projects with identical URLs, so every link
+                          in this section was a duplicate of one over there.
 
-                            no-underline is explicit and stays. Nothing underlines
-                            these today, because the Tailwind base layer makes an
-                            anchor inherit text-decoration rather than default to
-                            underline, but that is a reset detail rather than a
-                            decision. Foyez asked for no underline on a project
-                            name, so it is pinned here rather than left to depend on
-                            the reset surviving a Tailwind upgrade.
-                            hover:no-underline covers the hover state too, which a
-                            resting computed style would not catch.
-                          */
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            aria-label={`${project.name}, opens in a new tab`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80 no-underline transition-colors hover:text-foreground hover:border-blue-400/50 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
-                          >
-                            {project.name}
-                            <ExternalLink
-                              className="h-3 w-3 shrink-0 opacity-60"
-                              aria-hidden
-                            />
-                          </a>
-                        ) : (
-                          /*
-                            No tabIndex. It used to carry tabIndex={0} so the ARIA
-                            tooltip pattern had a focusable trigger, and with the
-                            tooltips gone that would be a tab stop that does
-                            nothing on Enter. Removing it takes five inert stops
-                            out of the keyboard path.
-                          */
-                          <span className="inline-block px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80">
-                            {project.name}
-                          </span>
-                        )}
+                          The NAME is not a duplicate, which is why it stays. On
+                          /projects these nine all render their outbound control as
+                          the generic string "View Project" and the name is only a
+                          card heading, grouped by project type. Here the name sits
+                          under an employer and a date range, which is the one thing
+                          /projects cannot express: that this work happened in that
+                          role, in that period. Strip the names and a role becomes
+                          "I tested some things".
+
+                          The URL is what goes, for two reasons. It is redundant with
+                          /projects, and nine outbound links in the middle of a CV are
+                          nine invitations to leave the site before reaching Contact.
+                          /projects is now the single owner of these URLs.
+
+                          THE DATA KEEPS ITS url FIELDS ON PURPOSE. They are still
+                          correct and still the source for /projects, so this is a
+                          presentation decision expressed here rather than a deletion
+                          that would have to be undone from the CV if Foyez reverses
+                          it. Three of these entries already had url: "" and rendered
+                          exactly like this, so no new visual case is introduced.
+
+                          R6 is satisfied by construction now: there is no anchor and
+                          no external-link icon anywhere in this list, so nothing
+                          looks pressable and nothing is. The ExternalLink import went
+                          with the anchor, since this was its only use in this file.
+                        */}
+                        <span className="inline-block px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground/80">
+                          {project.name}
+                        </span>
                       </li>
                     ))}
                   </ul>

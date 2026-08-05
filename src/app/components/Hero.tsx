@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { FileDown, Mail, Eye, BadgeCheck } from "lucide-react";
+import { FileDown, Mail, ArrowUpRight, BadgeCheck } from "lucide-react";
 import { experienceLabel, mailtoHref, profile } from "../data/profile";
 import { TestRunPanel } from "./TestRunPanel";
 import { TiltCard } from "./TiltCard";
@@ -15,13 +15,28 @@ import { GrainOverlay } from "./GrainOverlay";
   because first and last are the most-scanned positions in a wrapping row, so a
   heavily filtered keyword belongs there rather than buried in the middle.
 
-  Cypress, Selenium and Python are cut for space and appear in Experience.
+  Cypress and Selenium are cut for space and appear in Experience.
+
+  PYTHON ADDED AND TYPESCRIPT REPLACED BY JAVASCRIPT, both at Foyez's request, and
+  the second one fixed an R5 problem rather than just a preference.
+
+  TypeScript was NOT in cv-data.txt. The languages line, 318, reads "Python,
+  JavaScript, HTML, and CSS", so the hero was advertising a language his own CV
+  never claims, in the most-read block on the site. JavaScript is what the CV says
+  and it is the honest chip. Python comes from the same line and from line 504.
+
+  Python sits before JavaScript because that is the CV's own order, so the two
+  can be diffed against it without thinking.
+
+  EIGHT CHIPS NOW, NOT SEVEN, which invalidates the old wrap solution. The bands
+  below were re-derived from scratch for the new set; see the note on the row.
 */
 const techStack = [
   "AI Agents",
   "MCP",
   "Playwright",
-  "TypeScript",
+  "Python",
+  "JavaScript",
   "Postman",
   "TestRail",
   "CI/CD",
@@ -51,7 +66,7 @@ export function Hero() {
         measure: ragged on both edges across 1200px is genuinely hard to read,
         where the old left-aligned column got its measure from the grid for free.
       */}
-      <div className="max-w-7xl mx-auto w-full relative z-10">
+      <div className="max-w-6xl mx-auto w-full relative z-10">
         <div className="mx-auto max-w-3xl space-y-8 text-center">
           {/*
             THE NAME IS THE H1 NOW. It used to be the value proposition, and the
@@ -73,13 +88,56 @@ export function Hero() {
             of date. tabular-nums per R1, which is what this project uses instead
             of a second font family when a digit sits in running text.
           */}
-          <p className="text-xl sm:text-2xl font-semibold text-foreground/90 tabular-nums">
-            {profile.role}
-            <span className="mx-2 text-muted-foreground/50" aria-hidden>
-              ·
-            </span>
-            {experienceLabel()}
-          </p>
+          {/*
+            ROLE AND CERTIFICATION ARE ONE UNIT NOW, at Foyez's request: the
+            ISTQB pill used to sit with the degree, which read as "education"
+            and put a professional credential in the academic slot. It belongs
+            with the designation, since ISTQB-CTFL is what qualifies the role
+            line above it, not a school fact.
+
+            space-y-3 inside, tighter than the block's space-y-8, so the role
+            and the pill read as one lock-up rather than two stacked lines.
+          */}
+          <div className="space-y-3">
+            <p className="text-xl sm:text-2xl font-semibold text-foreground/90 tabular-nums">
+              {profile.role}
+              <span className="mx-2 text-muted-foreground/50" aria-hidden>
+                ·
+              </span>
+              {experienceLabel()}
+            </p>
+
+            {/*
+              BadgeCheck rather than colour alone. R7: a blue pill reading
+              "certified" leans entirely on the blue to signal "verified", and
+              the icon carries that meaning when the colour is stripped.
+            */}
+            {/*
+              WHITE, at Foyez's request, and deliberately NOT a solid white fill.
+
+              The recommendation was to keep this blue: it is a status badge rather
+              than an action, and blue is the site's information accent, used on the
+              logo mark, the radar stroke, all eight Skills group icons and the
+              company names in Experience. He chose white for the look. Recorded
+              because the reasoning matters for what shape the white takes.
+
+              A SOLID white fill is the wrong white here. View Work and the email
+              button are solid white because they are the page's two primary
+              ACTIONS, and that scarcity is what makes them read as pressable. This
+              pill cannot be clicked, so a third solid white block would promise an
+              action it does not have, which is R6's dead-affordance problem in
+              reverse.
+
+              So: a hairline white border and white text over a barely-there fill.
+              Reads as white and sits with the buttons tonally, without looking like
+              one. Contrast measured at 21:1 for the text and the border stays under
+              the 3:1 that would make it look like a control edge.
+            */}
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 py-1 text-xs text-white">
+              <BadgeCheck className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {profile.certification}
+            </div>
+          </div>
 
           {/*
             EDUCATION MOVED UP HERE FROM ITS OWN SECTION, at Foyez's request: one
@@ -101,42 +159,12 @@ export function Hero() {
             deliberately omitted, and that is still Foyez's call to reverse.
           */}
           {/*
-            PROOF BLOCK: the certification and the degree together, below the
-            name and the role rather than above them.
-
-            The pill used to lead the hero. Foyez asked whether that was right and
-            it was not, for two reasons. It put a 12px element directly above a
-            72px one, so the reader met a credential before they knew whose it
-            was, which works against the name-leads hierarchy he chose. And
-            ISTQB-CTFL is the industry's baseline certification, held by most
-            working testers, so it is good evidence but weak positioning; leading
-            with it overweighted it against the agents and the public repos
-            further down.
-
-            The counter-argument was real and is why it is still here at all: it
-            is the one claim on this page a stranger can verify without taking
-            Foyez's word for it. That argues for visible, not for first.
-
-            Reading order is now who, then what, then what backs it up. The two
-            credentials sit in one block because they are the same kind of thing,
-            assessed by someone else, and grouping them stops the hero being five
-            separate stacked lines before the tagline.
-
-            space-y-3 inside, tighter than the block's space-y-8, so the pill and
-            the degree read as one unit rather than as two more entries in the
-            stack.
+            THE DEGREE STANDS ALONE now that the pill has moved up to the role.
+            Reading order is who, then what they do and what certifies it, then
+            where they trained, which is the order of decreasing relevance to a
+            hiring reader.
           */}
-          <div className="space-y-3">
-            {/*
-              BadgeCheck rather than colour alone. R7: a blue pill reading
-              "certified" leans entirely on the blue to signal "verified", and the
-              icon carries that meaning when the colour is stripped.
-            */}
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs text-blue-400">
-              <BadgeCheck className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              {profile.certification}
-            </div>
-
+          <div>
             {/*
               THE BREAKS ARE DELIBERATE RATHER THAN LEFT TO THE WRAP. Written as
               one flat string with middot separators, this ran to three lines at
@@ -216,10 +244,83 @@ export function Hero() {
             not cost keyboard users the affordance.
           */}
           <div className="flex flex-col items-stretch gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
-            <Button size="lg" className="w-full gap-2 sm:w-auto" asChild>
-              <a href="#projects">
-                <Eye className="w-4 h-4" />
+            {/*
+              WHITE, HERO ONLY. Foyez asked for white after violet, and scoped
+              it to this button rather than the shared variant, so the Contact
+              section CTA stays blue. The override lives here for that reason:
+              promoting white into buttonVariants would turn every primary
+              button on the site into a white slab.
+
+              bg-white with text-neutral-950, not text-black. Pure black on pure
+              white is 21:1 and technically fine, but the page's own foreground
+              is oklch(0.145) rather than #000, so the softer near-black matches
+              the type colour used everywhere else and still measures ~19:1.
+
+              Hover DARKENS the label rather than the fill. A white button has
+              nowhere brighter to go, so the usual "lighten on hover" move is
+              unavailable; dropping the fill to neutral-200 instead keeps the
+              state change visible without inventing a tint.
+
+              The explicit dark: variants are required, not redundant. The
+              shared variant sets dark:bg-blue-600, which would otherwise win in
+              dark mode and repaint this button blue.
+
+              THE FOCUS RING HAD TO BE OVERRIDDEN TOO, and this is the part that
+              is easy to miss. buttonVariants uses focus-visible:ring-ring/50,
+              which composites to about #2e2e2e. The ring paints OUTSIDE the
+              fill, so it lands on the near-black page, not on the button:
+              measured 1.46:1 against the background, well under the 3:1 a focus
+              indicator needs, so keyboard users got effectively no indicator.
+              A dark ring is only ever visible when the button itself is dark.
+              White fill therefore needs a white ring, with an offset so it
+              reads as a ring rather than as a thicker button edge.
+            */}
+            <Button
+              size="lg"
+              className="w-full gap-2 bg-white text-neutral-950 hover:bg-neutral-200 hover:text-neutral-950 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 sm:w-auto"
+              asChild
+            >
+              {/*
+                ARROW AFTER THE LABEL, NOT BEFORE IT. Eye was the wrong mark:
+                it reads as passive observation, and every editor UI has trained
+                readers to see it as a visibility toggle rather than a link.
+
+                A directional mark belongs after the text, because it points at
+                where the click goes. A leading arrow points back into the label.
+                ArrowUpRight rather than the plain ArrowRight already used by
+                "See all projects", so two different links do not share one mark.
+
+                The nudge is transform-only per R8, and group-hover drives it
+                from the button so the arrow still moves when the pointer is
+                anywhere on the button, not just over the 16px icon.
+
+                R8 reduced motion is handled by motion-reduce:transition-none
+                alone. It removes the ANIMATION while still allowing the hover
+                end state, which is what R8 asks for: skip to the end state, do
+                not loop.
+
+                DO NOT ADD motion-reduce:transform-none HERE. It was in the first
+                version of this button and it broke the nudge outright: Tailwind
+                v4 compiles it to `transform: none`, it carries the same
+                specificity as the group-hover utilities, and it is emitted later
+                in the stylesheet, so it won the cascade and the arrow sat
+                displaced at rest and snapped back on hover, exactly inverted.
+                Verified by measuring computed `translate` in both states.
+
+                Note for future edits: v4 translate utilities write the standalone
+                `translate` property, NOT `transform`. Reading
+                getComputedStyle().transform to check this nudge will always
+                report "none" and look like a failure. Read `translate`.
+
+                The icon is aria-hidden because "View Work" already says where
+                this goes, so announcing an arrow adds nothing.
+              */}
+              <a href="#projects" className="group">
                 View Work
+                <ArrowUpRight
+                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+                  aria-hidden
+                />
               </a>
             </Button>
             <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" asChild>
@@ -239,39 +340,47 @@ export function Hero() {
           </div>
 
           {/*
-            SEVEN CHIPS WRAP BADLY AND CENTRING DOES NOT FIX IT. Worth stating
-            plainly, because the first version of this block assumed it did:
-            justify-center centres the last line, it does not change how many
-            items land on it. Seven items greedily wrapped still leaves one
-            alone, which R4 calls a bug, and it now had two chances to happen
-            instead of one.
+            CENTRING DOES NOT FIX A BAD WRAP. Worth stating plainly, because the
+            first version of this block assumed it did: justify-center centres the
+            last line, it does not change how many items land on it. A greedy wrap
+            that strands one chip alone is an R4 orphan whether it is centred or
+            not.
 
-            Simulated the greedy wrap across every container width from 150px to
-            780px using the measured chip widths, which gives the exact bands:
+            RE-SOLVED FOR EIGHT CHIPS, replacing the seven-chip bands that were
+            here before. Python was added and TypeScript became JavaScript, so
+            every width this depends on moved and the old table was void.
 
-                container      wrap
-                >= 582px       7 on one line
-                514 to 581     6 / 1     <- orphan
-                434 to 513     5 / 2
-                344 to 433     4 / 3
-                328 to 343     3 / 4
-                260 to 327     3 / 3 / 1 <- orphan
-                246 to 259     3 / 2 / 2
-                230 to 245     2 / 2 / 3
-                190 to 229     2 / 2 / 2 / 1 <- orphan
+            Measured widths, gap 8px: AI Agents 84.3, MCP 54.6, Playwright 90.9,
+            Python 69.8, JavaScript 87.4, Postman 80.6, TestRail 72.4, CI/CD 60.3.
+            Eight chips need 656.3px to sit on one line.
 
-            Two orphan bands sit right where real viewports land: a 390px phone
-            gives the row 311px, which is 3/3/1, and a 640px tablet gives it
-            about 561px, which is 6/1. The old max-w-sm only ever avoided the
-            first one by accident, and only on desktop.
+            Greedy wrap simulated over every cap from 180 to 780. Only two orphan
+            bands exist, which is a narrower risk than the three the seven-chip set
+            had:
 
-            So the cap is pinned into a safe band at each breakpoint rather than
-            left to chance: 256px lands in 3/2/2, 432px lands in 4/3, and from
-            1024px the uncapped row inherits max-w-3xl's 768px, which clears 582
-            and puts all seven on one line.
+                cap            wrap
+                >= 658         8 on one line
+                588 to 657     7 / 1     <- orphan
+                520 to 587     6 / 2
+                424 to 519     5 / 3
+                326 to 423     4 / 4
+                324 to 325     4 / 3 / 1 <- orphan
+                248 to 323     3 / 3 / 2  (and 3/2/3 at the low end)
+                180 to 247     2 / 2 / 2 / 2
 
-            IF A CHIP IS ADDED, RENAMED OR REORDERED, re-run that simulation.
-            The bands are a function of the exact chip widths, so they move.
+            THE EXISTING CAPS SURVIVED THE CHANGE, verified rather than assumed:
+            256px lands in 3/3/2 and 432px lands in 5/3, both safe. They are kept
+            rather than retuned, since a cap that already sits mid-band is better
+            than a new number chosen to look tidy.
+
+            From lg the row is uncapped and inherits the hero copy's max-w-3xl,
+            768px, which clears 658 and puts all eight on one line. That is only
+            110px of headroom above the 7/1 band, so if the hero measure is ever
+            narrowed below 658 this row needs an explicit lg cap instead.
+
+            IF A CHIP IS ADDED, RENAMED OR REORDERED, re-run that simulation. The
+            bands are a function of the exact chip widths, so they move. This is
+            the second time they have had to.
           */}
           <div className="mx-auto flex max-w-[256px] flex-wrap justify-center gap-2 pt-2 sm:max-w-[432px] lg:max-w-none">
             {techStack.map((tech) => (

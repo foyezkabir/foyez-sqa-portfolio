@@ -68,7 +68,7 @@ export function QAWithAI() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 via-transparent to-blue-600/5" />
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="relative group">
           {/* Glow pulled back so the hero panel stays the brightest thing on the page. */}
           <div className="absolute -inset-1 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-3xl blur-lg opacity-20" />

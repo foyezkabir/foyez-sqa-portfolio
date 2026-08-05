@@ -76,10 +76,30 @@ export function WhatIBring() {
                 {/* Glow effect on hover */}
                 <div className="absolute -inset-1 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
-                <div className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl p-8 space-y-4 backdrop-blur-sm h-full">
-                  <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                    <Icon className="w-7 h-7 text-blue-500" />
-                  </div>
+                <div className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl p-8 space-y-3 backdrop-blur-sm h-full">
+                  {/*
+                    THE TINTED BOX IS GONE, at Foyez's request. It was a 56px
+                    bg-blue-500/10 tile holding a 28px glyph, which made these the
+                    largest and heaviest icons on the site and left four blue tiles
+                    reading as the subject of the section instead of the titles.
+
+                    It was also inconsistent. The site had three different icon
+                    treatments: 56px boxed here, 48px boxed in QA + AI, and a bare
+                    16 to 18px glyph in Automation-First and Skills & Tools. This
+                    now matches the bare-glyph pattern, which is the one used by the
+                    two most recently built sections.
+
+                    ARIA-HIDDEN ADDED, which was missing. Every other decorative
+                    icon on the site carries it. Without it a screen reader can
+                    announce the glyph alongside the title it decorates, which is
+                    the R9 rule these four were quietly breaking.
+
+                    space-y-4 dropped to space-y-3 on the card. The old spacing was
+                    tuned around a 56px block; with a 20px glyph the same gap left
+                    the icon floating away from the title it labels. This is the
+                    same correction Automation-First already needed when Foyez
+                    reported its label sitting too far from its icon.
+                  */}
                   <div className="space-y-2">
                     {/*
                       A RAMP PLUS A RESERVE, and it needed both. Measured every 8px
@@ -104,9 +124,73 @@ export function WhatIBring() {
                       whitespace. Below md the grid is a single column, so each card
                       is its own row and parity cannot break.
                     */}
-                    <h3 className="text-xl lg:text-2xl font-semibold md:min-h-[3.5rem] lg:min-h-0">
-                      {capability.title}
-                    </h3>
+                    {/*
+                      THE ICON SITS ON THE TITLE LINE, at Foyez's request, rather
+                      than stacked above it. Same pattern as Automation-First and
+                      Skills & Tools, where the glyph and the label it belongs to
+                      read as one unit instead of as two rows.
+
+                      THE RESERVE MOVED OFF THE h3 AND ONTO THIS ROW, and that
+                      detail is load bearing. md:min-h-[3.5rem] holds two lines of
+                      text-xl through the md two-column range, where these four
+                      titles wrap at different widths. Left on the h3 while the h3
+                      is a flex ITEM, the reserve makes the h3 taller than its text
+                      and items-start then pins the glyph to the top of that padded
+                      box, so the icon and the first line of text stop agreeing.
+                      Putting the min-h on the flex CONTAINER keeps the row the
+                      right height and lets both children sit on the same baseline.
+
+                      items-start, not items-center: with a title that wraps to two
+                      lines, centring would float the glyph to the middle of the
+                      block instead of beside the first line, which is where a mark
+                      labelling a heading belongs.
+
+                      mt-0.5 nudges the 20px glyph down onto the cap height of the
+                      text next to it. Optical alignment: an icon's bounding box is
+                      taller than the letterforms, so matching the box tops leaves
+                      the glyph looking a couple of pixels high.
+
+                      THE RESERVE NOW RUNS THROUGH lg AND IS RELEASED AT xl, and
+                      that change is the direct consequence of putting the icon on
+                      this line. It was lg:min-h-0, released at 1024, which was
+                      correct while the title had the full card width to itself.
+
+                      Adding the glyph and its 10px gap costs the title about 30px
+                      of line, which moves the wrap threshold right. Caught at
+                      exactly 1024 by sweeping every 8px from 768 to 1024: card
+                      heights still matched at 242px, but the two descriptions in
+                      the top row started 32px apart, 4137 against 4105, because
+                      "Owns Delivery, Grows the Team" now needs two lines at
+                      text-2xl where "Autonomous AI QA Pipelines" needs one. R3 asks
+                      for contents to line up, not just for boxes to match, so equal
+                      heights alone was not good enough.
+
+                      xl is where the two-column track is wide enough that all four
+                      fit on one line WITH the glyph, so the reserve can be dropped
+                      without the mismatch coming back.
+
+                      TWO RESERVE SIZES, BECAUSE THE TYPE RAMPS. The title is
+                      text-xl to lg and text-2xl from lg, and a reserve has to hold
+                      two lines of whatever size is actually rendering:
+
+                          text-xl   line-height 28px  ->  56px, the md value
+                          text-2xl  line-height 32px  ->  64px, the lg value
+
+                      Running the 56px reserve into the text-2xl range left it 8px
+                      short of two lines, which showed up as the two descriptions in
+                      the top row starting 8px apart across 1024 to 1080. Measured,
+                      not derived: the wrapping title's row was 64px against 56px
+                      for its neighbour.
+                    */}
+                    <div className="flex items-start gap-2.5 md:min-h-[3.5rem] lg:min-h-[4rem] xl:min-h-0">
+                      <Icon
+                        className="mt-0.5 h-5 w-5 shrink-0 text-blue-500"
+                        aria-hidden
+                      />
+                      <h3 className="text-xl lg:text-2xl font-semibold">
+                        {capability.title}
+                      </h3>
+                    </div>
                     <p className="text-muted-foreground leading-relaxed">
                       {capability.description}
                     </p>

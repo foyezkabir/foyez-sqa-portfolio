@@ -1,3 +1,4 @@
+import { useLayoutEffect } from "react";
 import {
   ArrowLeft,
   Globe,
@@ -179,6 +180,53 @@ function GroupHeading({
 }
 
 export function ProjectsPage() {
+  /*
+    THIS PAGE PINS ITSELF TO THE TOP ON MOUNT, and it is deliberately redundant
+    with RouteScroll in App.tsx.
+
+    Foyez reported three times that arriving here landed part way down the page,
+    and the third time was after a fix that measured clean. Every reproduction
+    attempt with a real trusted click, on both the dev server and a production
+    preview build, and including the path where a stale #hash is still in the URL
+    from a nav click, reported y 0. So the router-level fix does work in every case
+    that could be constructed, and the failure he is seeing was not reproducible
+    here.
+
+    That is exactly the situation where a second, independent guarantee is worth
+    more than another round of measurement. RouteScroll depends on a router effect
+    firing with the right timing relative to the browser's scroll clamp. This does
+    not depend on the router at all: the page itself, on mount, puts the window at
+    the top. If the router effect is early, late, or does not run, this still holds.
+
+    useLayoutEffect rather than useEffect on purpose. It runs BEFORE the browser
+    paints, so the first frame a visitor sees is already at the top, rather than a
+    frame of mid-page content that is corrected afterwards. That is the difference
+    between "loads at the top" and "jumps to the top", and the second one is what
+    reads as broken.
+
+    The rAF reassert is here for the same reason it is in App.tsx: the browser
+    clamps an inherited scroll offset into this shorter document during the layout
+    that follows, which can overwrite a scroll set before it.
+
+    scroll-behavior is forced off around both, because html carries
+    scroll-behavior: smooth for in-page anchors and it otherwise animates this,
+    which is the visible "comes from the bottom" symptom. It is restored to its
+    previous inline value so the stylesheet keeps owning that rule.
+  */
+  useLayoutEffect(() => {
+    const jumpToTop = () => {
+      const root = document.documentElement;
+      const previous = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      root.style.scrollBehavior = previous;
+    };
+
+    jumpToTop();
+    const frame = requestAnimationFrame(jumpToTop);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   return (
     /*
       pt-32 clears the fixed header, which is about 73px tall. The home page gets
@@ -201,16 +249,52 @@ export function ProjectsPage() {
             </Link>
           </Button>
 
-          <div className="space-y-4">
+          {/*
+            HEADING AND SUBTITLE CENTRED, at Foyez's request, which also brings this
+            page into line with every section heading on the home page. Those are all
+            centred blocks, so a left-aligned h1 here was the odd one out.
+
+            text-center on the wrapper rather than on each child, so the two cannot
+            drift apart later.
+
+            The Back to home button above is deliberately NOT centred. It is
+            navigation rather than part of the title block, it belongs on the left
+            edge where a back control is expected, and its -ml-3 pulls the ghost
+            button's padding back so its label lines up with the content edge.
+            Centring it would both break that alignment and read as a third title
+            line.
+          */}
+          <div className="space-y-4 text-center">
             {/*
               An h1, because this page has no hero to carry one. Ramped for the
               same reason every other heading on the site now is.
             */}
             <h1 className="text-4xl sm:text-5xl font-bold">All Projects</h1>
-            <p className="text-lg text-muted-foreground max-w-3xl">
-              Everything Foyez has tested or built, grouped by where it came from.
-              Public repositories link to the code; client products link out where
-              a public address exists.
+            {/*
+              FIRST PERSON, AND SHORTER. Foyez rejected the previous line, which
+              read "Everything Foyez has tested or built, grouped by where it came
+              from. Public repositories link to the code; client products link out
+              where a public address exists."
+
+              Two things were wrong with it. It referred to him in the THIRD
+              PERSON on his own portfolio, where every other section speaks as him
+              ("Hand over a product and I own quality end to end", "That judgement
+              stays with me"), so this page read as though someone else wrote it.
+              And the second sentence explained the page's own link conventions,
+              which a reader works out by looking at it, so it spent two lines of
+              prime space narrating the UI instead of saying anything.
+
+              It also carried a semicolon, which this project's copy does not use.
+            */}
+            {/*
+              mx-auto is required, not decorative. max-w-3xl caps this paragraph at
+              768px inside a 1152px container, and text-center only centres the TEXT
+              WITHIN the box, not the box itself. Without the auto margins the box
+              stays pinned left, so the subtitle would sit visibly off-centre from
+              the h1 above it on any viewport wider than 768px.
+            */}
+            <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
+              Everything I have tested or built, grouped by where it came from.
             </p>
           </div>
         </div>

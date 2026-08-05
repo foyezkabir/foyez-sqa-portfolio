@@ -1,6 +1,7 @@
 import { Hero } from "../components/Hero";
 import { AutomationFirst } from "../components/AutomationFirst";
 import { EngineeringCapabilities } from "../components/EngineeringCapabilities";
+import { SkillsAndTools } from "../components/SkillsAndTools";
 import { WhatIBring } from "../components/WhatIBring";
 import { Projects } from "../components/Projects";
 import { AgentsAndAutomation } from "../components/AgentsAndAutomation";
@@ -25,8 +26,24 @@ export function HomePage() {
     <>
       <Hero />
       <AutomationFirst />
+      {/*
+        SKILLS SITS DIRECTLY AFTER THE RADAR, and the pairing is the point. The
+        radar scores five themes with evidence, this lists the full working set
+        from the CV. Scored summary first, then the detail behind it, so a reader
+        who wants depth gets the rubric and a reader scanning for a tool name
+        finds the list immediately below it.
+
+        THEY HAVE SEPARATE IDS NOW. They shared the "capabilities" wrapper when
+        Skills shipped, which was fine while only Capabilities was in the nav.
+        Foyez then asked for Skills in the menu too, and a nav item cannot target
+        a section that has no id of its own: both links would have scrolled to the
+        same place and the second would have looked broken.
+      */}
       <div id="capabilities">
         <EngineeringCapabilities />
+      </div>
+      <div id="skills">
+        <SkillsAndTools />
       </div>
       <WhatIBring />
       <div id="projects">
