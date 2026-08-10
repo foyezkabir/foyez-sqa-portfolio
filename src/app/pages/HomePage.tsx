@@ -9,6 +9,7 @@ import { Certifications } from "../components/Certifications";
 import { Experience } from "../components/Experience";
 import { QAWithAI } from "../components/QAWithAI";
 import { Contact } from "../components/Contact";
+import { Reveal } from "../components/Reveal";
 
 /**
  * The home page, lifted out of App.tsx unchanged when Module 6 added the second
@@ -25,7 +26,9 @@ export function HomePage() {
   return (
     <>
       <Hero />
-      <AutomationFirst />
+      <Reveal>
+        <AutomationFirst />
+      </Reveal>
       {/*
         SKILLS SITS DIRECTLY AFTER THE RADAR, and the pairing is the point. The
         radar scores five themes with evidence, this lists the full working set
@@ -40,22 +43,34 @@ export function HomePage() {
         same place and the second would have looked broken.
       */}
       <div id="capabilities">
-        <EngineeringCapabilities />
+        <Reveal>
+          <EngineeringCapabilities />
+        </Reveal>
       </div>
       <div id="skills">
-        <SkillsAndTools />
+        <Reveal>
+          <SkillsAndTools />
+        </Reveal>
       </div>
-      <WhatIBring />
+      <Reveal>
+        <WhatIBring />
+      </Reveal>
       <div id="projects">
-        <Projects />
+        <Reveal>
+          <Projects />
+        </Reveal>
       </div>
       {/*
         Between Featured Work and Certifications on purpose, so the page escalates
         how checkable each claim is: work Foyez describes, then code a reader can
         open, then credentials a third party assessed.
       */}
-      <AgentsAndAutomation />
-      <Certifications />
+      <Reveal>
+        <AgentsAndAutomation />
+      </Reveal>
+      <Reveal>
+        <Certifications />
+      </Reveal>
       {/*
         NO EDUCATION SECTION. It had one for part of a day and Foyez cut it: a
         single degree under a 48px heading read too solo, which it did, because
@@ -64,11 +79,17 @@ export function HomePage() {
         That also keeps this page on the nine sections the Figma structure defines.
       */}
       <div id="experience">
-        <Experience />
+        <Reveal>
+          <Experience />
+        </Reveal>
       </div>
-      <QAWithAI />
+      <Reveal>
+        <QAWithAI />
+      </Reveal>
       <div id="contact">
-        <Contact />
+        <Reveal>
+          <Contact />
+        </Reveal>
       </div>
     </>
   );

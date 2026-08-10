@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, Terminal, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import { profile } from "../data/profile";
 
@@ -133,6 +133,21 @@ function useActiveSection(ids: string[], enabled: boolean) {
 
     if (!elements.length) return;
 
+    /*
+      GUARDED, and this was a real crash rather than a precaution. Calling the
+      constructor unguarded threw "ReferenceError: IntersectionObserver is not
+      defined" inside Header, which unmounted the entire React tree: measured
+      document.getElementById('root').children.length === 0 and zero body text. A
+      white screen, from a nav underline.
+
+      Found by deliberately deleting window.IntersectionObserver before boot to test
+      that the new Reveal component fails open. Reveal was fine; this was not.
+
+      The active underline is decoration. Losing it costs nothing; losing the page
+      costs everything, so the feature degrades and the site still renders.
+    */
+    if (typeof IntersectionObserver === "undefined") return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -199,6 +214,67 @@ export function Header() {
   */
   const activeId = useActiveSection(NAV_IDS, onHome);
 
+  /*
+    HAS THE READER SCROLLED PAST THE HERO?
+
+    Foyez pointed out that his name appears at 16px in this header and again at 72px
+    in the hero, 86px apart and both fully on screen at the top of the page. Measured:
+    the name occurs 3 times on the page and the role 4 times.
+
+    Deleting the header name was the wrong fix, because the header is `fixed` and the
+    hero name is only visible in the first viewport. On a page that runs 21 screens on
+    a phone, the header lock-up is the ONLY thing carrying his identity for the other
+    20. It is not redundant, it is redundant IN ONE PLACE.
+
+    So the name is hidden while the hero is on screen and fades in below it. He also
+    said, correctly, that an empty header would look unfinished, which is why the FK
+    monogram stays visible the whole time and only the wordmark moves.
+
+    A PLAIN SCROLL LISTENER, NOT AN OBSERVER, and deliberately so. This needs a
+    THRESHOLD CROSSING, not element visibility, and a scroll handler reading scrollY
+    against innerHeight is the direct expression of that. It also cannot repeat the
+    R12 failure: there is no flag waiting for an event that might never arrive, the
+    value is recomputed from the clock of the scroll position on every event, and it
+    is seeded by calling the handler once on mount so a page restored mid-scroll is
+    correct on the first paint rather than after the first scroll.
+
+    passive: true, since this never calls preventDefault.
+
+    OFF THE HOME PAGE THE NAME IS ALWAYS SHOWN. /projects has no hero to duplicate, so
+    hiding the wordmark there would be a loss with no gain.
+  */
+  const [scrolledPastHero, setScrolledPastHero] = useState(false);
+
+  /*
+    Read once on mount rather than subscribed to. A visitor changing their motion
+    preference mid-visit is vanishingly rare, and the cost of getting it wrong is one
+    300ms fade until the next navigation, not a broken page.
+  */
+  const [prefersReducedMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+
+  useEffect(() => {
+    if (!onHome) {
+      setScrolledPastHero(true);
+      return;
+    }
+    const onScroll = () => {
+      /*
+        70% of the viewport rather than 100%. By the time the hero name has scrolled
+        most of the way off, the header wordmark is no longer competing with it, and
+        waiting for the full height leaves an awkward stretch where neither is
+        readable.
+      */
+      setScrolledPastHero(window.scrollY > window.innerHeight * 0.7);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [onHome]);
+
   // Close on route change, so navigating to /projects does not leave it hanging.
   useEffect(() => {
     setOpen(false);
@@ -237,14 +313,110 @@ export function Header() {
         <Link
           to="/"
           aria-label={`${profile.name}, back to the home page`}
-          className="flex items-center gap-3 no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-lg"
+          className="flex items-center no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-lg"
         >
-          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-            <Terminal className="w-5 h-5 text-white" aria-hidden />
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span className="font-semibold text-foreground">{profile.name}</span>
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          {/*
+            THE FK MONOGRAM IS THE PERSISTENT MARK. The blue terminal tile was removed
+            earlier as dull; this replaces it with something that is actually Foyez's,
+            and it already existed in the project as public/favicon-512.png, drawn as
+            a white FK on the dark theme's own background. No new asset, no generic
+            glyph, and it reads as a mark rather than as a stock icon.
+
+            It stays visible at every scroll position, which is what stops the header
+            looking empty while the wordmark is hidden. Foyez raised exactly that when
+            the fade was proposed.
+
+            alt="" and aria-hidden, deliberately. The Link already carries an
+            aria-label naming him and saying where it goes, so a screen reader
+            announcing the monogram as well would say his name twice for one control.
+            R9 asks for real alt text on images that carry meaning; here the meaning is
+            on the link.
+          */}
+          <img
+            src="/favicon-512.png"
+            alt=""
+            aria-hidden
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-lg"
+          />
+
+          {/*
+            THE WORDMARK FADES IN ONLY AFTER THE HERO, which is the whole fix for the
+            duplication Foyez spotted.
+
+            OPACITY AND WIDTH, not conditional rendering. Removing the element from
+            the DOM would make the nav jump sideways as it appears and disappear from
+            the accessibility tree on the one screen where it is least needed. Keeping
+            it mounted and animating it means the layout settles once and stays.
+
+            R8: opacity is a compositor property, but max-width is a LAYOUT one and
+            animating it is exactly what R8 warns against. It is used here anyway and
+            the reason is worth stating: the alternative, animating transform, would
+            slide the wordmark over or under the nav rather than letting the nav sit
+            where it always sits. This is one element, transitioning once per page
+            visit, on a threshold crossing rather than a loop, so the layout cost is
+            paid twice in a session rather than per frame of a continuous animation.
+
+            motion-reduce:transition-none per R8, so a reduced-motion visitor gets the
+            end state with no animation at all.
+
+            aria-hidden while collapsed, so a screen reader is not offered a name that
+            is visually absent. The Link's own aria-label is unaffected and still
+            announces him at every scroll position.
+          */}
+          {/*
+            INLINE STYLES, NOT CONDITIONAL CLASSES, and this was arrived at by
+            debugging rather than preference.
+
+            Two attempts with toggled utility classes both failed silently, and the
+            reason is worth keeping. The class list on the element read exactly
+            "ml-3 max-w-xs opacity-100" while the COMPUTED values were max-width 0px
+            and opacity 0. Both the expanded and the collapsed utilities live in the
+            stylesheet permanently, they carry identical specificity, so which one
+            wins is decided by SOURCE ORDER in the generated CSS, not by which class
+            React put on the element last. Toggling class names cannot beat that.
+
+            An earlier attempt also used max-w-[280px], which Tailwind never generated
+            at all: 0 occurrences in the built CSS while every neighbouring utility
+            was present. Two different silent failures in the same element.
+
+            Inline styles have higher specificity than any utility class, so they
+            settle it. The transition stays in the class list because it is
+            unconditional and has nothing to lose a cascade fight with.
+
+            THE LESSON, since this is the third silent-no-op in this project after
+            bg-[--status-good] and scale-x: VERIFY A TOGGLED STYLE BY READING THE
+            COMPUTED VALUE. A correct-looking class list proves nothing.
+          */}
+          <div
+            aria-hidden={!scrolledPastHero}
+            style={{
+              maxWidth: scrolledPastHero ? "280px" : "0px",
+              opacity: scrolledPastHero ? 1 : 0,
+              marginLeft: scrolledPastHero ? "0.75rem" : "0",
+              /*
+                THE TRANSITION IS INLINE TOO, and it has to be. R8 requires reduced
+                motion to be honoured, and motion-reduce:transition-none is a CLASS,
+                which cannot override an inline transition on the same element.
+                Measured: with the transition in the class list it still computed
+                0.3s under prefers-reduced-motion, so the rule was silently ignored.
+
+                Deciding it in JS from the same media query the CSS would have used
+                keeps one source of truth, and "none" here means a reduced-motion
+                visitor gets the end state instantly rather than a 300ms animation
+                to the same place.
+              */
+              transition: prefersReducedMotion
+                ? "none"
+                : "opacity 300ms ease-out, max-width 300ms ease-out, margin 300ms ease-out",
+            }}
+            className="flex min-w-0 flex-col overflow-hidden leading-tight"
+          >
+            <span className="whitespace-nowrap font-semibold text-foreground">
+              {profile.name}
+            </span>
+            <span className="whitespace-nowrap text-[11px] uppercase tracking-wider text-muted-foreground">
               {profile.role}
             </span>
           </div>

@@ -205,13 +205,60 @@ export function Hero() {
             page, so it stays visually loud and immediately under the identity
             block, just no longer the largest thing or the document heading.
           */}
+          {/*
+            SHARPENED, at Foyez's choice, after comparing this hero with a peer
+            SQA portfolio whose tagline is a single hard line.
+
+            It read "Building automation systems teams actually trust." That was
+            good: it named an outcome rather than an activity, and "actually" did
+            real work. What it did not do was say the one thing no other QA CV on
+            the pile can say.
+
+            The replacement is a two-beat contrast, and the contrast IS the point.
+            The first half is the machine's job, the second is his, and a reader
+            takes away that he is not selling automation for its own sake. It also
+            echoes the closing line of Automation-First, "the part a tool cannot
+            do, deciding what is worth testing", so the hero and that section now
+            argue the same thing rather than two unrelated things.
+
+            R5: BOTH HALVES TRACE. The agents are cv-data.txt line 122, "Built a
+            suite of Claude Code agents automating core QA workflows", and six
+            public repositories. The judgement half is line 33's "requirement
+            analysis, test planning, and end-to-end validation" plus the TulipTech
+            leadership bullets. Nothing here is a new claim.
+
+            NO METRIC, DELIBERATELY. The obvious "punchier" move is a number, and
+            this template shipped with three invented ones that had to be torn out.
+            A contrast that is true beats a figure that is not.
+          */}
           <p className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-balance">
-            Building automation systems teams actually trust.
+            Agents do the repetitive work. I own the judgement.
           </p>
 
+          {/*
+            REWRITTEN BECAUSE THE NEW TAGLINE MADE IT REDUNDANT, and a screenshot
+            caught it where the measurements did not.
+
+            It read "Hand over a product and I own quality end to end, from test
+            strategy to release sign-off, with AI agents doing the repetitive
+            work." Sitting under "Agents do the repetitive work. I own the
+            judgement." that repeated BOTH halves of the line above it, in the same
+            order, within 40px. The reader met the same idea twice before reaching
+            the buttons.
+
+            A supporting line under a claim should say what the claim does not.
+            The tagline states the division of labour; this now says what that
+            division BUYS a team, which is the end-to-end ownership and the
+            sign-off, and it names the deliverable rather than restating the
+            arrangement.
+
+            R5: unchanged in substance, still cv-data.txt line 33's requirement
+            analysis, test planning and end-to-end validation, plus the TulipTech
+            release sign-off bullets. Only the framing moved.
+          */}
           <p className="mx-auto max-w-xl text-lg text-muted-foreground leading-relaxed">
-            Hand over a product and I own quality end to end, from test strategy
-            to release sign-off, with AI agents doing the repetitive work.
+            Hand over a product and quality is owned end to end, from test
+            strategy through to release sign-off.
           </p>
 
           {/*
