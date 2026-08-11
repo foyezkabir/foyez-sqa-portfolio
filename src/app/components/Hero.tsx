@@ -1,5 +1,10 @@
 import { Button } from "./ui/button";
-import { FileDown, Mail, ArrowUpRight, BadgeCheck } from "lucide-react";
+/*
+  ArrowUpRight was dropped when View Work was removed on 2026-08-11. It was the only
+  consumer, so the import went with the button rather than being left behind as dead
+  weight in the bundle.
+*/
+import { FileDown, Mail, BadgeCheck, Github, Linkedin } from "lucide-react";
 import { experienceLabel, mailtoHref, profile } from "../data/profile";
 import { TestRunPanel } from "./TestRunPanel";
 import { TiltCard } from "./TiltCard";
@@ -274,23 +279,89 @@ export function Hero() {
             three fit on one line with room to spare.
           */}
           {/*
-            ONE PRIMARY, NOT TWO. View Work and Contact were both the default
-            solid blue, which Foyez flagged as flat, and he is right: two
-            identical filled buttons side by side make the reader choose between
-            equals, so neither reads as the main action.
+            FOUR CONTROLS, ALL LABELLED, ALL WITH REAL DESTINATIONS. Set by Foyez
+            2026-08-11: Contact, LinkedIn, GitHub and Download Resume, and nothing
+            else.
 
-            Now solid blue, then outline, then ghost, which is the order the page
-            actually wants. View Work is what a stranger should do first, since
-            everything persuasive is downstream of it. Contact is the real goal but
-            it is premature before the work has been seen. Download Resume is for
-            the reader who has already decided, so it can be the quietest.
+            VIEW WORK WAS REMOVED AT HIS REQUEST. It pointed at #projects, an in-page
+            scroll, and it was the only control here that did not leave the page. The
+            nav carries Work, and the page scrolls, so the destination is not lost.
+            What goes in its place is the emphasis: Contact is now the primary and
+            solid white, which is the correct hierarchy for a portfolio hero anyway.
+            Contact was always the real goal; View Work was a step on the way to it.
 
-            R6 still holds on the third: it renders only when profile.resumeUrl is
-            non-empty, so a missing file means no button rather than a dead one.
-            Ghost keeps a visible focus-visible ring, so the drop in emphasis does
-            not cost keyboard users the affordance.
+            THE ICON-ONLY SOCIAL ROW ADDED EARLIER THE SAME DAY IS GONE. It was the
+            right answer to a different question, keeping a fourth CTA from flattening
+            a three-step ladder. Foyez has now asked for all four as peers, so icons
+            without labels would be the odd ones out. Labelled buttons also state
+            their destination without relying on glyph recognition, which is better
+            for the two links whose logos a reader may not know.
+
+            EMPHASIS: solid white, then three outlines. One primary and three peers,
+            rather than four equals or a four-step ladder nobody can read. Contact is
+            the action worth taking; LinkedIn, GitHub and the CV are all "find out
+            more", so they share a weight. Ghost was dropped for the resume because at
+            four items a near-invisible fourth button reads as disabled next to three
+            outlined ones.
+
+            R6 ON ALL FOUR. Every one renders only when its URL exists: mailtoHref is
+            derived from profile.email, and the other three are guarded on
+            profile.linkedinUrl, profile.githubUrl and profile.resumeUrl. Emptying any
+            value in profile.ts removes that control rather than leaving a dead one.
+
+            THE WRAP HAD TO BE CAPPED, AND THE FIRST VERSION OF THIS COMMENT WAS
+            WRONG ABOUT IT. It claimed four items would wrap 2/2 on their own. Measured
+            at 640px, the width where the full-width stack ends and the row begins,
+            they wrapped 3/1 with Download Resume stranded alone: the exact R4 orphan
+            the three-button version had already been fixed for, reintroduced by the
+            fourth item.
+
+            THE ARITHMETIC, so the next person does not have to rediscover it. The four
+            buttons measure 112 + 120 + 109 + 193 and take three 16px gaps, so one line
+            needs 582px. At 640px the container is about 561px, just under, so the
+            greedy wrap takes three and drops the widest onto its own line. At 768px
+            the container is 689px and all four fit.
+
+            THE CAP HAD TO BE DERIVED, NOT PICKED. max-w-md was tried first and did
+            nothing: it applied correctly at 448px and the row still wrapped 3/1,
+            because Contact, LinkedIn and GitHub plus two gaps are only 373px and fit
+            inside it comfortably. A cap that is wider than the thing it is meant to
+            exclude is not a cap.
+
+            The window is bounded on both sides. It must be at least the widest PAIR,
+            GitHub plus Download Resume plus a gap, 318px, or the second row breaks
+            too. It must be under the first TRIPLE, 373px, or three still fit. So any
+            value from 318 to 372 works and everything outside fails. 340px sits in
+            the middle with roughly 20px of margin either side, which is enough to
+            absorb a label or font-metric change without silently reverting to 3/1.
+
+            Tailwind's own steps miss this window: max-w-sm is 384px, above it, and
+            max-w-xs is 320px, inside but only 2px clear of the lower bound. Hence the
+            arbitrary value.
+
+            THE CAP LIFTS AT md, NOT lg, AND THAT BOUNDARY WAS ALSO MEASURED. Released
+            at lg first, which was too late: 768px has 689px of container against the
+            582px one line needs, so it was showing a 2/2 that had room to be a single
+            row. Moving the release to md restores 4-across from 768 while 760px, just
+            below it, still wraps a clean 2/2.
+
+            So the full ladder is: full-width stack below 640, balanced 2/2 from 640 to
+            767, one row from 768 up.
+
+            Below sm they stay a full-width stack, one per line. That reads as a
+            deliberate mobile layout rather than a bad wrap, and the targets are easier
+            to hit.
+
+            Verified at 390, 640, 700, 768, 800, 1024, 1280 and 1920: every width is
+            either 4-across, a clean 2/2, or the full-width stack. No mixed shape with a
+            stranded last item at any width.
+
+            EXTERNAL LINKS CARRY target="_blank" AND rel="noreferrer noopener", and
+            say so in an aria-label, so a screen reader user is told the tab will
+            change before they activate it. The resume is a download and the mailto
+            hands off to a mail client, so neither takes a new tab.
           */}
-          <div className="flex flex-col items-stretch gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
+          <div className="mx-auto flex flex-col items-stretch gap-4 pt-2 sm:max-w-[340px] sm:flex-row sm:flex-wrap sm:items-center sm:justify-center md:max-w-none">
             {/*
               WHITE, HERO ONLY. Foyez asked for white after violet, and scoped
               it to this button rather than the shared variant, so the Contact
@@ -322,64 +393,80 @@ export function Hero() {
               White fill therefore needs a white ring, with an offset so it
               reads as a ring rather than as a thicker button edge.
             */}
+            {/*
+              CONTACT INHERITED THE WHITE TREATMENT FROM VIEW WORK, and the whole
+              override had to move with it rather than being left behind on a deleted
+              button. Every line below is load bearing:
+
+              WHITE, HERO ONLY. Foyez asked for white after violet, scoped to this
+              button rather than the shared variant, so the Contact SECTION's own CTA
+              stays blue. Promoting white into buttonVariants would turn every primary
+              button on the site into a white slab.
+
+              bg-white with text-neutral-950, not text-black. Pure black on pure white
+              is 21:1 and technically fine, but the page's own foreground is
+              oklch(0.145) rather than #000, so the softer near-black matches the type
+              colour used everywhere else and still measures about 19:1.
+
+              Hover DARKENS the label rather than the fill. A white button has nowhere
+              brighter to go, so the usual "lighten on hover" move is unavailable;
+              dropping the fill to neutral-200 keeps the state change visible without
+              inventing a tint.
+
+              The explicit dark: variants are required, not redundant. The shared
+              variant sets dark:bg-blue-600, which would otherwise win in dark mode and
+              repaint this button blue.
+
+              THE FOCUS RING HAD TO BE OVERRIDDEN TOO, and this is the part that is
+              easy to miss. buttonVariants uses focus-visible:ring-ring/50, which
+              composites to about #2e2e2e. The ring paints OUTSIDE the fill, so it
+              lands on the near-black page rather than on the button: measured 1.46:1
+              against the background, well under the 3:1 a focus indicator needs, so
+              keyboard users got effectively no indicator. A dark ring is only ever
+              visible when the button itself is dark. White fill therefore needs a
+              white ring, with an offset so it reads as a ring rather than as a
+              thicker button edge.
+            */}
             <Button
               size="lg"
               className="w-full gap-2 bg-white text-neutral-950 hover:bg-neutral-200 hover:text-neutral-950 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200 sm:w-auto"
               asChild
             >
-              {/*
-                ARROW AFTER THE LABEL, NOT BEFORE IT. Eye was the wrong mark:
-                it reads as passive observation, and every editor UI has trained
-                readers to see it as a visibility toggle rather than a link.
-
-                A directional mark belongs after the text, because it points at
-                where the click goes. A leading arrow points back into the label.
-                ArrowUpRight rather than the plain ArrowRight already used by
-                "See all projects", so two different links do not share one mark.
-
-                The nudge is transform-only per R8, and group-hover drives it
-                from the button so the arrow still moves when the pointer is
-                anywhere on the button, not just over the 16px icon.
-
-                R8 reduced motion is handled by motion-reduce:transition-none
-                alone. It removes the ANIMATION while still allowing the hover
-                end state, which is what R8 asks for: skip to the end state, do
-                not loop.
-
-                DO NOT ADD motion-reduce:transform-none HERE. It was in the first
-                version of this button and it broke the nudge outright: Tailwind
-                v4 compiles it to `transform: none`, it carries the same
-                specificity as the group-hover utilities, and it is emitted later
-                in the stylesheet, so it won the cascade and the arrow sat
-                displaced at rest and snapped back on hover, exactly inverted.
-                Verified by measuring computed `translate` in both states.
-
-                Note for future edits: v4 translate utilities write the standalone
-                `translate` property, NOT `transform`. Reading
-                getComputedStyle().transform to check this nudge will always
-                report "none" and look like a failure. Read `translate`.
-
-                The icon is aria-hidden because "View Work" already says where
-                this goes, so announcing an arrow adds nothing.
-              */}
-              <a href="#projects" className="group">
-                View Work
-                <ArrowUpRight
-                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
-                  aria-hidden
-                />
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" asChild>
               <a href={mailtoHref}>
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4" aria-hidden />
                 Contact
               </a>
             </Button>
+            {profile.linkedinUrl && (
+              <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" asChild>
+                <a
+                  href={profile.linkedinUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label="LinkedIn profile, opens in a new tab"
+                >
+                  <Linkedin className="w-4 h-4" aria-hidden />
+                  LinkedIn
+                </a>
+              </Button>
+            )}
+            {profile.githubUrl && (
+              <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" asChild>
+                <a
+                  href={profile.githubUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label="GitHub profile, opens in a new tab"
+                >
+                  <Github className="w-4 h-4" aria-hidden />
+                  GitHub
+                </a>
+              </Button>
+            )}
             {profile.resumeUrl && (
-              <Button size="lg" variant="ghost" className="w-full gap-2 sm:w-auto" asChild>
+              <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto" asChild>
                 <a href={profile.resumeUrl} download>
-                  <FileDown className="w-4 h-4" />
+                  <FileDown className="w-4 h-4" aria-hidden />
                   Download Resume
                 </a>
               </Button>

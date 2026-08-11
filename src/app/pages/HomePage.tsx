@@ -10,6 +10,7 @@ import { Experience } from "../components/Experience";
 import { QAWithAI } from "../components/QAWithAI";
 import { Contact } from "../components/Contact";
 import { Reveal } from "../components/Reveal";
+import { TheRecord } from "../components/TheRecord";
 
 /**
  * The home page, lifted out of App.tsx unchanged when Module 6 added the second
@@ -26,6 +27,18 @@ export function HomePage() {
   return (
     <>
       <Hero />
+      {/*
+        THE STAT ROW SITS DIRECTLY UNDER THE HERO, which is the whole point of it.
+        A reader who has just met the name and the claim gets the scale of the work
+        before committing to nine sections of detail. Placed anywhere lower it would
+        be a summary of things already read.
+
+        Wrapped in Reveal like every other section below the hero, so it fades in
+        rather than being the one block that appears instantly.
+      */}
+      <Reveal>
+        <TheRecord />
+      </Reveal>
       <Reveal>
         <AutomationFirst />
       </Reveal>
@@ -68,9 +81,20 @@ export function HomePage() {
       <Reveal>
         <AgentsAndAutomation />
       </Reveal>
-      <Reveal>
-        <Certifications />
-      </Reveal>
+      {/*
+        id ADDED 2026-08-11 so the nav can land here. Foyez asked for a
+        Certifications menu item and the section had no scroll target, so the item
+        could not have been added without this wrapper.
+
+        The id is on a wrapper rather than the section itself, matching every other
+        target on this page. Consistency aside, it means the anchor lands above the
+        section's own top padding rather than partway into it.
+      */}
+      <div id="certifications">
+        <Reveal>
+          <Certifications />
+        </Reveal>
+      </div>
       {/*
         NO EDUCATION SECTION. It had one for part of a day and Foyez cut it: a
         single degree under a 48px heading read too solo, which it did, because

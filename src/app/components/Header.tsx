@@ -52,19 +52,35 @@ import { profile } from "../data/profile";
   recognition and gain nothing.
 */
 /*
-  FIVE ITEMS, IN PAGE ORDER. Skills was added at Foyez's request once the section
-  existed. Nav order matches scroll order, so a reader working down the menu moves
-  down the page rather than jumping around it.
+  SIX ITEMS, IN PAGE ORDER. Skills was added once that section existed, and
+  Certifications on 2026-08-11, both at Foyez's request. Nav order matches scroll
+  order, so a reader working down the menu moves down the page rather than jumping
+  around it. Certifications therefore sits between Work and Experience, which is
+  where the section actually is, not at the end of the list.
 
-  THE WIDTH WAS RE-MEASURED, not assumed, because a fifth item is what pushes this
-  row toward the logo lock-up. At the md breakpoint where the nav first appears the
-  gap between the lock-up and the first link is the number that matters, and it is
-  checked at 768, 800, 1280 and 1920 rather than eyeballed at one width.
+  THE SECTION HAD NO id UNTIL THIS ITEM WAS ADDED. A div#certifications wrapper went
+  into HomePage.tsx in the same change; without it the link would have pointed at
+  nothing and done nothing, which is the R6 dead-affordance case.
+
+  THE WIDTH WAS RE-MEASURED, not assumed, because this is the item most likely to
+  push the row into the logo lock-up. At 768px, the md breakpoint where the nav
+  first appears and therefore the tightest case, the gap between the lock-up and the
+  first link measured 248px with the five-item nav 383px wide. "Certifications" at
+  the nav's 400 14px Montserrat costs 116px including the 24px flex gap, leaving
+  132px clear. It fits, and it was checked rather than hoped for. Re-verified at
+  768, 800, 1280 and 1920 after the change.
+
+  THE FULL WORD, NOT "Certs". There was room for it, and an abbreviation on a
+  credentials link is a strange place to save 56px: the whole point of the section
+  is that the claims are formally verified, so the nav should say so in full. The
+  label is also deliberately shorter than the heading it lands on, "Certifications &
+  Training", for the same reason "Contact" does not read "Let's Connect".
 */
 const NAV = [
   { id: "capabilities", label: "Capabilities" },
   { id: "skills", label: "Skills" },
   { id: "projects", label: "Work" },
+  { id: "certifications", label: "Certifications" },
   { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];
@@ -214,66 +230,6 @@ export function Header() {
   */
   const activeId = useActiveSection(NAV_IDS, onHome);
 
-  /*
-    HAS THE READER SCROLLED PAST THE HERO?
-
-    Foyez pointed out that his name appears at 16px in this header and again at 72px
-    in the hero, 86px apart and both fully on screen at the top of the page. Measured:
-    the name occurs 3 times on the page and the role 4 times.
-
-    Deleting the header name was the wrong fix, because the header is `fixed` and the
-    hero name is only visible in the first viewport. On a page that runs 21 screens on
-    a phone, the header lock-up is the ONLY thing carrying his identity for the other
-    20. It is not redundant, it is redundant IN ONE PLACE.
-
-    So the name is hidden while the hero is on screen and fades in below it. He also
-    said, correctly, that an empty header would look unfinished, which is why the FK
-    monogram stays visible the whole time and only the wordmark moves.
-
-    A PLAIN SCROLL LISTENER, NOT AN OBSERVER, and deliberately so. This needs a
-    THRESHOLD CROSSING, not element visibility, and a scroll handler reading scrollY
-    against innerHeight is the direct expression of that. It also cannot repeat the
-    R12 failure: there is no flag waiting for an event that might never arrive, the
-    value is recomputed from the clock of the scroll position on every event, and it
-    is seeded by calling the handler once on mount so a page restored mid-scroll is
-    correct on the first paint rather than after the first scroll.
-
-    passive: true, since this never calls preventDefault.
-
-    OFF THE HOME PAGE THE NAME IS ALWAYS SHOWN. /projects has no hero to duplicate, so
-    hiding the wordmark there would be a loss with no gain.
-  */
-  const [scrolledPastHero, setScrolledPastHero] = useState(false);
-
-  /*
-    Read once on mount rather than subscribed to. A visitor changing their motion
-    preference mid-visit is vanishingly rare, and the cost of getting it wrong is one
-    300ms fade until the next navigation, not a broken page.
-  */
-  const [prefersReducedMotion] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-
-  useEffect(() => {
-    if (!onHome) {
-      setScrolledPastHero(true);
-      return;
-    }
-    const onScroll = () => {
-      /*
-        70% of the viewport rather than 100%. By the time the hero name has scrolled
-        most of the way off, the header wordmark is no longer competing with it, and
-        waiting for the full height leaves an awkward stretch where neither is
-        readable.
-      */
-      setScrolledPastHero(window.scrollY > window.innerHeight * 0.7);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [onHome]);
 
   // Close on route change, so navigating to /projects does not leave it hanging.
   useEffect(() => {
@@ -316,110 +272,81 @@ export function Header() {
           className="flex items-center no-underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-lg"
         >
           {/*
-            THE FK MONOGRAM IS THE PERSISTENT MARK. The blue terminal tile was removed
-            earlier as dull; this replaces it with something that is actually Foyez's,
-            and it already existed in the project as public/favicon-512.png, drawn as
-            a white FK on the dark theme's own background. No new asset, no generic
-            glyph, and it reads as a mark rather than as a stock icon.
+            "foyez." AS A TEXT WORDMARK, at Foyez's request after seeing the same
+            treatment on iamnaiem.me. It replaces the FK monogram image, which itself
+            replaced the blue terminal tile he called dull.
 
-            It stays visible at every scroll position, which is what stops the header
-            looking empty while the wordmark is hidden. Foyez raised exactly that when
-            the fade was proposed.
+            TEXT, NOT AN IMAGE, and that is the main reason this is better than what it
+            replaces. It costs no network request, it stays sharp at any zoom or pixel
+            density, it inherits Montserrat so R1 holds without an exception, and it
+            recolours with the theme instead of being a baked-in PNG. The FK monogram
+            was a 29kB image doing the job of nine characters.
 
-            alt="" and aria-hidden, deliberately. The Link already carries an
-            aria-label naming him and saying where it goes, so a screen reader
-            announcing the monogram as well would say his name twice for one control.
-            R9 asks for real alt text on images that carry meaning; here the meaning is
-            on the link.
+            WHITE, NOT THE GRADIENT IT SHIPPED WITH. It was blue-to-purple for one
+            turn, matching the reference site, and Foyez pulled it: a purple mark in the
+            header pulls against the white the rest of the site now leads with, the two
+            primary CTAs and his own name in the hero. He is right, and the reasoning
+            generalises.
+
+            The gradient was defensible on its own terms, since blue-to-purple already
+            runs through the card glows and the QA + AI panel. But those are BACKGROUND
+            washes at low opacity, decoration behind content. Using the same pair as
+            saturated FOREGROUND text puts a third colour language into a header whose
+            only other elements are white and muted grey.
+
+            White also makes the wordmark agree with the full name that fades in beside
+            it on scroll. Two versions of the same name in two different colours, 12px
+            apart, would read as two separate things rather than one lock-up.
+
+            The full stop is plain text now rather than a separately coloured span. With
+            no gradient there is nothing for it to anchor, and a lone coloured dot would
+            be the only accent left in the header.
+
+            text-foreground, NOT text-white, and the difference is deliberate even
+            though it is 4 percent of luminance. Measured: text-white is #ffffff while
+            the hero h1 and the wordmark beside this one are #ededed, the theme's
+            --foreground token. Foyez asked for it to match his name AND the View Work
+            button, which are not quite the same colour. It matched the full name,
+            which used to sit 12px away in this same lock-up. That name has since been
+            removed, so the adjacency argument no longer applies, but the token is kept:
+            #ededed is what every other piece of primary text on the site uses, and a
+            lone #ffffff here would be the only true white outside the two CTAs.
+
+            Using the token rather than a literal also means the mark follows the theme
+            if --foreground is ever retuned, which a hardcoded #ffffff would not.
+
+            LOWERCASE IS A STYLING CHOICE, NOT A DATA ONE. The class lowercases it
+            visually while the source text stays "foyez", so nothing downstream
+            inherits a mangled name.
+
+            aria-hidden, deliberately. The Link already carries an aria-label naming
+            him in full and saying where it goes, so announcing "foyez" as well would
+            say his name twice for one control. R9 wants the meaning available once,
+            and it is on the link. That label is also why removing the visible full
+            name below cost screen readers nothing.
+
+            THIS IS NOW THE ONLY THING IN THE LOCK-UP. A full name and role used to fade
+            in beside it once the reader scrolled past the hero, and Foyez asked where
+            that was coming from, which was the right question to ask.
+
+            The fade solved a real problem when it was built: his name rendered at 16px
+            here and 72px in the hero, 86px apart, and the header is fixed, so it was
+            the only identity below the fold. But it predates this wordmark. Once
+            "foyez." became permanent the fade was solving a problem that no longer
+            existed, and spending 142px to say "Foyez" a second time beside a mark that
+            already says it.
+
+            Removing it took the scroll listener, the reduced-motion state and an inline
+            transition with it. Nothing in this header moves on scroll now except the
+            nav underline.
           */}
-          <img
-            src="/favicon-512.png"
-            alt=""
+          <span
             aria-hidden
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0 rounded-lg"
-          />
-
-          {/*
-            THE WORDMARK FADES IN ONLY AFTER THE HERO, which is the whole fix for the
-            duplication Foyez spotted.
-
-            OPACITY AND WIDTH, not conditional rendering. Removing the element from
-            the DOM would make the nav jump sideways as it appears and disappear from
-            the accessibility tree on the one screen where it is least needed. Keeping
-            it mounted and animating it means the layout settles once and stays.
-
-            R8: opacity is a compositor property, but max-width is a LAYOUT one and
-            animating it is exactly what R8 warns against. It is used here anyway and
-            the reason is worth stating: the alternative, animating transform, would
-            slide the wordmark over or under the nav rather than letting the nav sit
-            where it always sits. This is one element, transitioning once per page
-            visit, on a threshold crossing rather than a loop, so the layout cost is
-            paid twice in a session rather than per frame of a continuous animation.
-
-            motion-reduce:transition-none per R8, so a reduced-motion visitor gets the
-            end state with no animation at all.
-
-            aria-hidden while collapsed, so a screen reader is not offered a name that
-            is visually absent. The Link's own aria-label is unaffected and still
-            announces him at every scroll position.
-          */}
-          {/*
-            INLINE STYLES, NOT CONDITIONAL CLASSES, and this was arrived at by
-            debugging rather than preference.
-
-            Two attempts with toggled utility classes both failed silently, and the
-            reason is worth keeping. The class list on the element read exactly
-            "ml-3 max-w-xs opacity-100" while the COMPUTED values were max-width 0px
-            and opacity 0. Both the expanded and the collapsed utilities live in the
-            stylesheet permanently, they carry identical specificity, so which one
-            wins is decided by SOURCE ORDER in the generated CSS, not by which class
-            React put on the element last. Toggling class names cannot beat that.
-
-            An earlier attempt also used max-w-[280px], which Tailwind never generated
-            at all: 0 occurrences in the built CSS while every neighbouring utility
-            was present. Two different silent failures in the same element.
-
-            Inline styles have higher specificity than any utility class, so they
-            settle it. The transition stays in the class list because it is
-            unconditional and has nothing to lose a cascade fight with.
-
-            THE LESSON, since this is the third silent-no-op in this project after
-            bg-[--status-good] and scale-x: VERIFY A TOGGLED STYLE BY READING THE
-            COMPUTED VALUE. A correct-looking class list proves nothing.
-          */}
-          <div
-            aria-hidden={!scrolledPastHero}
-            style={{
-              maxWidth: scrolledPastHero ? "280px" : "0px",
-              opacity: scrolledPastHero ? 1 : 0,
-              marginLeft: scrolledPastHero ? "0.75rem" : "0",
-              /*
-                THE TRANSITION IS INLINE TOO, and it has to be. R8 requires reduced
-                motion to be honoured, and motion-reduce:transition-none is a CLASS,
-                which cannot override an inline transition on the same element.
-                Measured: with the transition in the class list it still computed
-                0.3s under prefers-reduced-motion, so the rule was silently ignored.
-
-                Deciding it in JS from the same media query the CSS would have used
-                keeps one source of truth, and "none" here means a reduced-motion
-                visitor gets the end state instantly rather than a 300ms animation
-                to the same place.
-              */
-              transition: prefersReducedMotion
-                ? "none"
-                : "opacity 300ms ease-out, max-width 300ms ease-out, margin 300ms ease-out",
-            }}
-            className="flex min-w-0 flex-col overflow-hidden leading-tight"
+            className="shrink-0 text-xl font-bold lowercase tracking-tight text-foreground"
           >
-            <span className="whitespace-nowrap font-semibold text-foreground">
-              {profile.name}
-            </span>
-            <span className="whitespace-nowrap text-[11px] uppercase tracking-wider text-muted-foreground">
-              {profile.role}
-            </span>
-          </div>
+            foyez.
+          </span>
+
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">

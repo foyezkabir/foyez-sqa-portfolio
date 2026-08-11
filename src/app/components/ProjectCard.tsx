@@ -97,8 +97,25 @@ export function ProjectCard({ project }: { project: Project }) {
         {/*
           flex-1 here, so the description absorbs the slack and the tag row sits on
           the card's bottom padding whatever the description length.
+
+          text-base, RAISED FROM text-sm 2026-08-11. Foyez marked this description
+          and a What I Bring description as needing to be the same size. Measured at
+          1154px, the two card BOXES were already identical, 522px wide with 32px
+          padding, 32px gap, in the same 1075px container, with the same 24px/600
+          title. The only real mismatch was here: 14px against What I Bring's 16px.
+
+          RAISED RATHER THAN LOWERED, which inverts the instruction and is
+          deliberate. "Follow Featured Work" read literally means dropping What I
+          Bring to 14px, but Foyez asked earlier in the same session to make the
+          card text in that section BIGGER, so shrinking it would undo a change he
+          had just requested. Put to him with both directions costed; he chose to
+          raise this one. The sections now agree at 16px and nothing got smaller.
+
+          THE OUTCOME LINE ABOVE STAYS text-sm ON PURPOSE. It is a caption on the
+          title, not body copy, and its min-h-[3.75rem] reserve is tuned to
+          text-sm wrapping. Resizing it would silently break that reserve.
         */}
-        <p className="flex-1 text-sm text-muted-foreground leading-relaxed">
+        <p className="flex-1 text-base text-muted-foreground leading-relaxed">
           {project.description}
         </p>
 

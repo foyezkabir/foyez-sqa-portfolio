@@ -44,7 +44,20 @@ import {
  *      decision, with a screen-reader equivalent retained.
  *
  *   4. A FLAT 500px HEIGHT at every width, which gave a 213px-wide plot stretched
- *      to 500px tall on a phone. Now square via aspect, capped at 560px.
+ *      to 500px tall on a phone. Now square via aspect, capped at 440px.
+ *
+ *   5. THE SECTION WAS 23 PERCENT TALLER THAN ITS NEIGHBOURS. Foyez reported the
+ *      heading and content as looking large here compared with other sections.
+ *      Measured, the TYPE was not the problem: the h2 is 48px and the subline 18px,
+ *      identical to every other section, and the chart's own labels are 13 to 14px
+ *      against 14px in Skills & Tools. Nothing was oversized.
+ *
+ *      The SECTION was: 1030px against 837px for Skills and 844px for What I Bring,
+ *      driven by a 560px square chart inside 48px of card padding. A section a fifth
+ *      taller than everything around it reads as "too big" even when every element in
+ *      it is the right size, which is why the instinct was right and the diagnosis
+ *      needed measuring. Chart capped at 440px and padding reduced to bring the
+ *      section into line.
  *
  * The tooltip stays, but as an enhancement rather than the only way to read the
  * chart.
@@ -219,7 +232,7 @@ export function EngineeringCapabilities() {
             311px card and left the SVG only 213px wide while still 500px tall. The
             plot was squeezed narrow and tall, and the axis labels had nowhere to go.
           */}
-          <div className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl px-2 py-4 sm:p-8 lg:p-12 backdrop-blur-sm">
+          <div className="relative bg-gradient-to-br from-secondary/50 to-secondary/30 border border-border rounded-2xl px-2 py-4 sm:p-6 lg:p-8 backdrop-blur-sm">
             {/*
               HEIGHT IS RESPONSIVE NOW, not a flat 500. A radar is square by nature,
               so a fixed height that ignores width gives a tall thin plot on a phone
@@ -246,7 +259,7 @@ export function EngineeringCapabilities() {
               padding. The earlier sweeps confirmed labels sit well inside the card even
               when they cross the SVG edge.
             */}
-            <div className="mx-auto w-full max-w-[560px] [&_svg]:overflow-visible">
+            <div className="mx-auto w-full max-w-[440px] [&_svg]:overflow-visible">
               <ResponsiveContainer width="100%" aspect={1}>
               {/*
                 outerRadius PULLS THE PLOT IN TO LEAVE ROOM FOR THE LABELS, and the

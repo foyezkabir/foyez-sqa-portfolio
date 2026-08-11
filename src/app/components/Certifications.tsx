@@ -48,21 +48,24 @@ const ISSUER_ICON: Record<string, typeof Award> = {
  * Credentials, assessed by a third party. Deliberately separate from the
  * capabilities radar above, which is self-scored against a published rubric.
  *
- * Six certificates in a carousel showing four at a time on desktop, so two sit
- * behind the arrows. That ratio is the reason a carousel works here: hiding two of
- * six is a genuine affordance, where hiding three of four would be a place content
- * goes to die. Same call, and the same reasoning, as Agents & Automation.
+ * Seven certificates in a carousel showing four at a time on desktop, so three sit
+ * behind the arrows. That ratio is the reason a carousel works here: hiding three
+ * of seven is a genuine affordance, where hiding three of four would be a place
+ * content goes to die. Same call, and the same reasoning, as Agents & Automation.
  *
- * It was five until "Claude Code in Action" was wired up on 2026-07-31. The asset
- * had been sitting in public/certificates/ under an auto-generated filename,
- * shipping to production and referenced nowhere.
+ * It was five until "Claude Code in Action" was wired up on 2026-07-31, and six
+ * until "Introduction to agent skills" was added on 2026-08-11. Both assets had
+ * been sitting in public/certificates/ under an auto-generated filename, shipping
+ * to production and referenced nowhere. Worth watching for: certificate downloads
+ * arrive with meaningless names, so a new file here is invisible until it is
+ * renamed and wired up.
  *
  * Clicking a card opens the PDF in a new tab, using the browser's own PDF viewer
  * for zoom, page navigation and print. Deliberately not an in-page iframe:
  * mobile Safari and Chrome frequently refuse to render PDFs in iframes and show
  * a blank box or a download prompt instead.
  *
- * The thumbnails are mixed orientation, three landscape and two portrait, and the
+ * The thumbnails are mixed orientation, landscape and portrait both, and the
  * media slot is a fixed 4:3 box so every card is the same height whatever the
  * image shape. The image is cropped to fill it, anchored to the top, so the slot
  * reads as a banner rather than a letterboxed page. See the note on the img for
@@ -103,6 +106,42 @@ const certifications: Certification[] = [
       "Anthropic's own course on Claude Code, the tool behind every agent in the Agents & Automation section above.",
     image: "/certificates/claude-code-in-action.jpg",
     pdf: "/certificates/claude-code-in-action.pdf",
+  },
+  /*
+    THIRD, KEEPING THE TWO ANTHROPIC CERTIFICATES TOGETHER. Added 2026-08-11 from
+    files Foyez dropped into public/certificates/ under the download's own name,
+    certificate-w8pjf4shpcbj-1786345795.pdf and -1786345797.jpg, renamed here to
+    match the convention every other entry uses.
+
+    TITLE, ISSUER AND RECIPIENT READ OFF THE CERTIFICATE IMAGE, not inferred from
+    the filename, which carried no hint of either. The face reads "Certificate of
+    Completion", "Foyez Kabir", "has completed", "Introduction to agent skills",
+    "ANTHROPIC". The title keeps the certificate's own sentence casing rather than
+    being title-cased to match its neighbours, because it is a proper name and R5
+    asks for names character for character.
+
+    NO DATE, DELIBERATELY. The certificate face carries none and the PDF text layer
+    contains only the recipient name, so there is nothing to state. The file's
+    creation timestamp is when Foyez downloaded it, not when the course was
+    completed, and publishing that as an issue date would be inventing a fact. No
+    other card here shows a date either, so nothing looks missing.
+
+    THE SUMMARY DESCRIBES WHY IT IS RELEVANT, NOT A SYLLABUS, for the same reason
+    as Claude Code in Action directly above: the certificate states completion and a
+    course name and says nothing about content, so listing modules would be filler.
+    Agent skills are what the AG-QREW and qa-api-pilot agents in Agents &
+    Automation are built out of, which is a claim a reader can check on this site.
+
+    LIKE CLAUDE CODE IN ACTION, THIS IS NOT ON THE CV. Added to the CV gap list in
+    cv-data.txt: "agent skills" is a term worth being keyword-filtered on.
+  */
+  {
+    title: "Introduction to agent skills",
+    issuer: "Anthropic",
+    summary:
+      "Anthropic's course on agent skills, the building blocks behind the QA agents in the Agents & Automation section above.",
+    image: "/certificates/intro-to-agent-skills.jpg",
+    pdf: "/certificates/intro-to-agent-skills.pdf",
   },
   {
     title: "Cypress: Web Automation Testing",
@@ -167,7 +206,7 @@ export function Certifications() {
           </h2>
           {/*
             This line is doing real work. The capabilities radar two sections up
-            is honest but still self-judged. These six were assessed by someone
+            is honest but still self-judged. These seven were assessed by someone
             else, and saying so shows the author knows the difference between the
             two kinds of claim, which is the instinct a QA hire should have.
           */}

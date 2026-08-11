@@ -104,7 +104,19 @@ export function RepoCard({ repo }: { repo: Repo }) {
           card heights, that is what makes a long summary and a short summary
           produce the same card.
         */}
-        <p className="flex-1 text-sm leading-relaxed text-muted-foreground">
+        {/*
+          text-base, RAISED FROM text-sm 2026-08-11, in the same pass that raised
+          ProjectCard. Not requested directly: Foyez asked for What I Bring and
+          Featured Work to match, and a sweep of every card description afterwards
+          found these six repo cards still at 14px while the other fourteen on the
+          Projects page had moved to 16px.
+
+          Left alone they would have been the only cards on the site with smaller
+          body copy, which is the exact inconsistency the request was about. They
+          sit in their own grid rather than beside a ProjectCard, so R3 parity
+          never caught it and a screenshot would not have shown it either.
+        */}
+        <p className="flex-1 text-base leading-relaxed text-muted-foreground">
           {repo.description}
         </p>
 

@@ -49,10 +49,33 @@ import {
  * is not a flow. 01 to 05 survives every reflow and is in the document order too,
  * since the list is an <ol>.
  *
- * THE COLUMN COUNTS AVOID AN R4 ORPHAN. Five items: 1 per row on a phone is a
- * deliberate stack, sm:grid-cols-3 gives 3 + 2, lg:grid-cols-5 gives one row.
- * sm:grid-cols-2 was rejected because five items in two columns is 2 + 2 + 1,
- * which strands the last tile alone.
+ * THE COLUMN COUNTS AVOID AN R4 ORPHAN, and this was re-solved after Foyez checked
+ * the section on an iPad mini and asked whether the flow still read correctly. It did
+ * not.
+ *
+ * sm:grid-cols-3 wrapped 3 + 2 at EVERY width from 640 to 1023px, which is the entire
+ * tablet band: iPad mini portrait 768, iPad Air 820, iPad Pro 11 inch 834. Measured
+ * one empty cell in the last row at all of them.
+ *
+ * For a five-STEP FLOW that is worse than an ordinary unbalanced wrap. The reader goes
+ * 01, 02, 03 along the first row, then jumps back to the far left for 04 and 05, so
+ * the left-to-right reading that carries the sequence breaks in the middle. A gap in a
+ * grid of unordered cards is untidy; a gap in a pipeline misstates the process.
+ *
+ * FIVE ITEMS CANNOT WRAP EVENLY INTO 2, 3 OR 4 COLUMNS. 2 gives 2+2+1, 3 gives 3+2,
+ * 4 gives 4+1. Only 1 and 5 divide it, so the fix is not a better wrap but no wrap at
+ * all: one per row on a phone, five across from md up.
+ *
+ * md, NOT sm, and the 128px difference matters. At sm the tiles are 103 to 123px wide
+ * and "Requirements" cannot fit or hyphenate inside one: measured card scrollWidth 119
+ * against clientWidth 101, so the word was clipped from 640 to 720px. hyphens-auto did
+ * not rescue it. md starts the row at 768px where a tile is 128px, which holds every
+ * title. Between 640 and 767 the single-column stack is correct: it is unambiguous
+ * about order and nothing is cramped.
+ *
+ * gap-3 rather than gap-4 below lg, because five tiles at 640px leave roughly 108px
+ * each and the gap is competing with the tile's own padding for that width. It steps
+ * back to gap-4 at lg where there is room.
  */
 const steps = [
   {
@@ -172,7 +195,7 @@ export function AutomationFirst() {
           R3: equal grid tracks, never per-tile widths, and h-full on the tile so
           it fills the stretched row.
         */}
-        <ol className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <ol className="grid grid-cols-1 gap-3 md:grid-cols-5 lg:gap-4">
           {steps.map(({ n, title, detail, Icon }) => (
             <li key={n} className="h-full">
               <div className="flex h-full flex-col gap-2 rounded-xl border border-border bg-gradient-to-br from-secondary/50 to-secondary/30 p-4 backdrop-blur-sm">
@@ -208,8 +231,23 @@ export function AutomationFirst() {
                   wrapping on one tile and not another starts the detail text at
                   different heights across the row, which R3 rules out. If a title
                   is ever lengthened, re-measure before shipping it.
+
+                  A TWO-LINE RESERVE THROUGH THE NARROW BAND, added when the grid went
+                  five-across from sm. At 640 to 800px a tile is 103 to 135px wide and
+                  "Explore & plan" and "Issues listed" wrap to two lines while
+                  "Execute" does not, so the detail lines started at different heights
+                  across the row. Measured: detailsAligned false at 640, 668, 700, 744,
+                  768 and 800.
+
+                  min-h-[2.5rem] holds two lines of text-sm, so every detail line
+                  starts at the same y whether its title wrapped or not. Released at lg
+                  where all five titles fit on one line and a reserve would only add
+                  whitespace. This is the same fix, for the same reason, that What I
+                  Bring needed on its card titles.
                 */}
-                <p className="text-sm font-semibold leading-snug">{title}</p>
+                <p className="min-h-[2.5rem] hyphens-auto text-sm font-semibold leading-snug lg:min-h-0">
+                  {title}
+                </p>
 
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   {detail}
