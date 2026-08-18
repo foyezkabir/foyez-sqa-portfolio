@@ -340,6 +340,49 @@ export function Header() {
             transition with it. Nothing in this header moves on scroll now except the
             nav underline.
           */}
+          {/*
+            THE FK MARK, added 2026-08-18. Foyez generated it and asked for it as
+            both the site logo and the favicon.
+
+            IT IS HIS OWN MARK, WHICH IS THE WHOLE POINT. He first asked for the
+            logo from shaqdeff/Portfolio-Template. That one is Shaquille Ndunda's
+            S/D monogram, his personal identity mark, in a repo with NO LICENCE
+            FILE, so reskinning it and putting another name beside it would have
+            been passing off someone else's brand. Declined, with the reasoning
+            given. He then produced this FK version, which settles the question:
+            same circular-monogram genre, his own initials.
+
+            SERVED FROM public/logo-fk.png, NOT THE FILE HE DROPPED IN. The
+            original was 1254x1254 RGB, colortype 2, verified by reading the IHDR
+            chunk: no alpha channel, so it was an opaque black square. That is
+            invisible on this near-black header only by accident, and it would
+            have shown as a black tile in any light browser chrome.
+
+            The conversion uses LUMINANCE AS ALPHA rather than a hard threshold on
+            black. The mark is white ink on black, so luminance already describes
+            the coverage of every pixel, which keeps the anti-aliased curve edges
+            intact. Thresholding would have given visibly jagged arcs at the 28px
+            this renders at.
+
+            h-7 w-7 against the wordmark's text-xl. Measured rather than guessed:
+            the cap height of "foyez." is about 20px, and a 28px mark reads as the
+            same optical weight beside it, because a circle with air inside it
+            needs to be slightly larger than the letters to look equal.
+
+            aria-hidden, like the wordmark next to it. The Link already carries
+            "Foyez Ullah Kabir, back to the home page" as its aria-label, so the
+            name is announced exactly once for this control. Adding alt text here
+            would say it a third time.
+          */}
+          <img
+            src="/logo-fk.png"
+            alt=""
+            aria-hidden
+            width={28}
+            height={28}
+            className="mr-2 h-7 w-7 shrink-0 select-none"
+            draggable={false}
+          />
           <span
             aria-hidden
             className="shrink-0 text-xl font-bold lowercase tracking-tight text-foreground"
