@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Globe, MonitorSmartphone } from "lucide-react";
 
 import { Button } from "./ui/button";
 import type { Project } from "./Projects";
@@ -118,6 +118,36 @@ export function ProjectCard({
             <OutcomeIcon className="mt-0.5 w-4 h-4 shrink-0" aria-hidden />
             <span>{project.outcome.text}</span>
           </div>
+
+          {/*
+            PLATFORM REACH, added 2026-10-26 at Foyez's request, matching the
+            affordance the Shadhin cards already have. Those cards carry it in
+            their outcome slot via platformLine in ProjectsPage, because they
+            have no outcome sentence; these cards do, so the platforms get
+            their own line under it.
+
+            Icon choice mirrors platformLine exactly: MonitorSmartphone when
+            the product is web and mobile, Globe when web only. R7 holds the
+            same way it does there: icon plus the platform names as text, so
+            nothing rests on colour, and the icon is aria-hidden because the
+            words carry the meaning.
+
+            R3: every TulipTech card has exactly one platform line and the
+            values are all single-line ("Web" or "Web, Mobile"), so the
+            description below starts level across a row. The Shadhin cards
+            pass no platforms and render nothing here, which keeps their grid
+            exactly as it measured before this line existed.
+          */}
+          {project.platforms && project.platforms.length > 0 && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {project.platforms.some((p) => p !== "Web") ? (
+                <MonitorSmartphone className="w-4 h-4 shrink-0" aria-hidden />
+              ) : (
+                <Globe className="w-4 h-4 shrink-0" aria-hidden />
+              )}
+              <span>{project.platforms.join(", ")}</span>
+            </div>
+          )}
         </div>
 
         {/*

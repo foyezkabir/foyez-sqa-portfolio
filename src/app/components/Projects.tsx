@@ -50,6 +50,13 @@ export type Project = {
    * rendered pointing nowhere.
    */
   url?: string;
+  /**
+   * Where the product runs, rendered as an icon plus the names under the
+   * outcome line. Foyez set these per product on 2026-10-26. The Shadhin cards
+   * never set this: their outcome slot already carries platform reach via
+   * platformLine in ProjectsPage, and a second copy would render it twice.
+   */
+  platforms?: string[];
 };
 
 /*
@@ -99,7 +106,15 @@ export const projects: Project[] = [
       visual row, and it already appears where it belongs, in the TulipTech
       Experience bullet about designing and executing test cases in TestRail.
     */
-    tags: ["Regulated domain", "Web, mobile, desktop", "Multi-tenant"],
+    /*
+      The "Web, mobile, desktop" tag came off when the dedicated platform line
+      arrived 2026-10-26: two platform statements on one card would have
+      disagreed, because Foyez set this line to "Web, Mobile" even though
+      cv-data.txt records the product as also spanning desktop. His call on
+      what the card advertises; the tag was the redundant copy.
+    */
+    tags: ["Regulated domain", "Multi-tenant"],
+    platforms: ["Web", "Mobile"],
   },
   {
     title: "LolerFlow",
@@ -110,6 +125,7 @@ export const projects: Project[] = [
       text: "Led QA end to end, delivered through client demos and sign-off milestones",
     },
     tags: ["Safety compliance", "Third-party integration", "SaaS", "simPro"],
+    platforms: ["Web", "Mobile"],
   },
   {
     title: "VelaCrew",
@@ -133,6 +149,7 @@ export const projects: Project[] = [
     },
     tags: ["AI agents", "Multi-user", "Huly integration"],
     url: "https://velacrew.ai/",
+    platforms: ["Web"],
   },
   {
     title: "StretchSense MDM",
@@ -143,6 +160,7 @@ export const projects: Project[] = [
       text: "Handling the full QA cycle on an enterprise device platform",
     },
     tags: ["Enterprise", "XR devices", "Security", "Scalability"],
+    platforms: ["Web"],
   },
   {
     title: "Empathika",
@@ -153,6 +171,7 @@ export const projects: Project[] = [
       text: "QA validation across a sprint on a live care platform",
     },
     tags: ["Care sector", "AI product", "Compliance"],
+    platforms: ["Web"],
     url: "https://empathika.com/",
   },
 ];

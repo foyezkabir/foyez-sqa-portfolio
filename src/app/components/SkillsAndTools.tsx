@@ -80,9 +80,12 @@ const GROUPS = [
     /* cv-data.txt line 320. */
     title: "Testing Tools",
     Icon: Wrench,
+    /* Appium added 2026-10-26: it is on the updated CV PDF in this exact
+       position, after Playwright, in both the summary and the tools table. */
     items: [
       "TestRail",
       "Playwright",
+      "Appium",
       "Cypress",
       "Selenium",
       "Postman",
@@ -142,7 +145,7 @@ export function SkillsAndTools() {
             decision, how the list was organised, which is of no interest to a
             reader; it belongs in a code comment, which is where it now lives.
 
-            The line has one job. A 37-item list invites the suspicion that it was
+            The line has one job. A 38-item list invites the suspicion that it was
             padded to catch recruiter searches, so this answers that doubt and
             nothing else.
 
@@ -155,7 +158,7 @@ export function SkillsAndTools() {
             against the section under it.
 
             WHY IT IS NOT "USED ON DELIVERED WORK", which was tried and pulled on
-            R5 grounds. 15 of these 37 items appear nowhere in cv-data.txt's
+            R5 grounds. 15 of these 38 items appear nowhere in cv-data.txt's
             employment history, only in its PREFERRED WORKING TOOLS list, which is
             a list of tools Foyez works with rather than evidence of shipped use:
             Python, JavaScript, HTML, CSS, Chrome DevTools, Playwright MCP, Chrome
@@ -166,7 +169,7 @@ export function SkillsAndTools() {
             for nearly half the section.
 
             "No padding" claims only that nothing was added to catch recruiter
-            searches. That is true of all 37, since every one is lifted from the
+            searches. That is true of all 38, since every one is lifted from the
             CV, and it still rebuts the one doubt a list this long invites.
 
             IF THIS LINE IS EVER STRENGTHENED, re-run that check first. The claim
@@ -186,7 +189,7 @@ export function SkillsAndTools() {
           pinned to 442px at 1280px, which meant the Database card was 442px tall
           to display the single string "MySQL (Basics)". Seven of the eight were
           mostly empty space, and the section ran 1191px, about 1.32 screens, to
-          show 37 short strings.
+          show 38 short strings.
 
           That is not a styling problem, it is the wrong container. Card parity
           and wildly uneven content are in direct conflict, and the content is the
@@ -222,7 +225,7 @@ export function SkillsAndTools() {
 
               {/*
                 The items are a wrapped run of plain text separated by a middot
-                rather than bordered chips. 37 bordered pills was most of the
+                rather than bordered chips. 38 bordered pills was most of the
                 visual noise: every item carried a box, so nothing stood out and
                 the whole block read as texture. Text with separators reads as a
                 list of names, which is what it is.

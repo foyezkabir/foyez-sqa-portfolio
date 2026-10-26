@@ -107,11 +107,13 @@ const stats = [
       cannot see, which is worse than making no claim at all.
 
       The note names the tools instead, which is the checkable part of the claim and
-      matches cv-data.txt line 60's Playwright, Cypress and Selenium.
+      matches the CV summary's Playwright, Cypress, Selenium and Appium. Appium was
+      added 2026-10-26 at Foyez's request, the day the updated CV PDF carrying it
+      replaced the old one in this repo.
     */
     value: "6",
     label: "Real-world projects automated",
-    note: "Playwright, Cypress and Selenium",
+    note: "Playwright, Appium, Cypress and Selenium",
   },
   {
     value: "15",
