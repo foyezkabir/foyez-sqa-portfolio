@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Code2, ExternalLink } from "lucide-react";
 
 import type { Repo } from "./AgentsAndAutomation";
@@ -10,6 +12,31 @@ import type { Repo } from "./AgentsAndAutomation";
  * step. Every comment below records something that was measured.
  */
 export function RepoCard({ repo }: { repo: Repo }) {
+  /*
+    Live last-month download count for a card published on npm. Fetched from
+    npm's public downloads API in the visitor's browser, so the figure is
+    npm's at view time, never a typed-in copy that goes stale: the same
+    reasoning that made the SonarCloud slot a link instead of a number. On any
+    failure the state stays null and the pill renders as a bare "npm" link,
+    because a missing number is honest and a stale one is not (R5).
+  */
+  const [npmDownloads, setNpmDownloads] = useState<number | null>(null);
+  useEffect(() => {
+    if (!repo.npm) return;
+    let cancelled = false;
+    fetch(`https://api.npmjs.org/downloads/point/last-month/${repo.npm}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data && typeof data.downloads === "number") {
+          setNpmDownloads(data.downloads);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [repo.npm]);
+
   return (
     <div className="relative group h-full">
       {/* Glow on hover only, matching the other card sections. */}
@@ -120,7 +147,12 @@ export function RepoCard({ repo }: { repo: Repo }) {
           {repo.description}
         </p>
 
-        <div className="flex items-center gap-2 text-xs text-foreground/70">
+        {/*
+          flex-wrap, added with the npm pill: "npm, 1,234 downloads/month" does
+          not fit beside the language on the 187px narrowest card, so the pill
+          drops to its own line there instead of overflowing the card.
+        */}
+        <div className="flex flex-wrap items-center gap-2 text-xs text-foreground/70">
           {/*
             One accent colour for every dot, not a per-language palette. The
             reserved status tokens in theme.css include a blue, a green, an amber
@@ -135,10 +167,11 @@ export function RepoCard({ repo }: { repo: Repo }) {
           {repo.stack}
 
           {/*
-            Renders only when a third-party report actually exists, so seven of the
-            eight cards show nothing here rather than an empty slot or a placeholder.
-            z-20 lifts it above the stretched GitHub overlay so this link receives
-            its own clicks.
+            Renders only when a third-party report actually exists; one card has
+            one, and the npm pill below follows the same rule for the one
+            published package. Every other card shows nothing here rather than
+            an empty slot or a placeholder. z-20 lifts these above the stretched
+            GitHub overlay so each link receives its own clicks.
           */}
           {repo.qualityReport && (
             <a
@@ -149,6 +182,31 @@ export function RepoCard({ repo }: { repo: Repo }) {
               className="relative z-20 ml-auto inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/50 px-2 py-0.5 text-foreground/80 no-underline transition-colors hover:border-blue-400/50 hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
             >
               {repo.qualityReport.label}
+              <ExternalLink
+                className="h-3 w-3 shrink-0 opacity-60"
+                aria-hidden
+              />
+            </a>
+          )}
+
+          {/*
+            The npm pill. Same construction as the quality-report pill above:
+            a real outbound link above the stretched overlay, icon plus words,
+            nothing resting on colour. The download count inside it is the
+            live fetch at the top of this component and simply does not
+            appear until it has loaded.
+          */}
+          {repo.npm && (
+            <a
+              href={`https://www.npmjs.com/package/${repo.npm}`}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label={`${repo.npm} on npm, opens in a new tab`}
+              className="relative z-20 ml-auto inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/50 px-2 py-0.5 text-foreground/80 no-underline transition-colors hover:border-blue-400/50 hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
+            >
+              npm
+              {npmDownloads !== null &&
+                `, ${npmDownloads.toLocaleString("en-US")} downloads/month`}
               <ExternalLink
                 className="h-3 w-3 shrink-0 opacity-60"
                 aria-hidden

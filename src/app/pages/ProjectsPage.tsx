@@ -339,25 +339,26 @@ export function ProjectsPage() {
             count={projects.length}
           />
           {/*
-            THIS GRID CHANGED FROM TWO COLUMNS TO THREE when VelaCrew made the
-            group five cards on 2026-10-26, and the column count is arithmetic,
-            not taste. Five divides into no two-column grid without stranding a
-            single card on the last row, which is the orphan R4 bans outright.
-            Three columns wrap 3+2, balanced at every width where the grid is
-            active, and below lg the single column cannot orphan anything.
+            TWO COLUMNS, MATCHING SHADHIN, UNDER AN EXPLICIT R4 OVERRIDE.
 
-            The step is at lg rather than md ON PURPOSE. At md a three-column
-            track inside this container is about 224px, far too narrow for these
-            cards, and a two-column md range would reintroduce the 2+2+1 orphan.
-            One column through the tablet range is the only orphan-free option
-            that keeps the cards readable.
+            This grid went to three columns when VelaCrew made the group five
+            cards, because five in two columns wraps 2+2+1 and strands a card
+            alone, which R4 bans. On 2026-10-26 Foyez asked for two per row to
+            match the Shadhin cards below. The orphan consequence was put to
+            him with three options (fifth card centered, fifth card
+            left-aligned, keep three columns) and he chose LEFT-ALIGNED: a
+            plain two-column grid where Empathika sits alone under the left
+            column. That is a logged R4 override, recorded in
+            portfolio-change-plan.txt, not an accident: do not "fix" the lone
+            card without asking him.
 
-            Shadhin below stays two-column: ten divides by two and not by
-            three, so the two groups genuinely need different column counts.
+            The classes now mirror the Shadhin grid below exactly, so the two
+            groups render identical card widths, which was the point of the
+            request.
           */}
-          <div className="grid auto-rows-fr grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 gap-8">
             {projects.map((project) => (
-              <ProjectCard key={project.title} project={project} narrow />
+              <ProjectCard key={project.title} project={project} />
             ))}
           </div>
         </section>

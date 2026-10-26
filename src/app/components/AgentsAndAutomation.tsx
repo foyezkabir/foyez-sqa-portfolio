@@ -62,6 +62,19 @@ export type Repo = {
    * invented stand-in is exactly what R5 exists to prevent.
    */
   qualityReport?: { label: string; url: string };
+  /**
+   * npm package name, when the repo is published as one. Renders a footer pill
+   * linking to the npm page, with the last-month download count fetched LIVE
+   * from npm's public downloads API at view time.
+   *
+   * The count is deliberately never hardcoded, for the same reason the
+   * SonarCloud slot above is a link and not a number: a figure typed in today
+   * is stale by next month, and R5 treats a stale number as an invented one.
+   * The live value is attested by npm, not by Foyez, and when the fetch fails
+   * (offline, API change) the pill falls back to the bare "npm" label rather
+   * than a wrong figure.
+   */
+  npm?: string;
 };
 
 /* Exported for the /projects page, for the same single-source reason as `experiences`. */
@@ -105,8 +118,15 @@ export const repos: Repo[] = [
     name: "appium-test-reportium",
     url: "https://github.com/foyezkabir/appium-test-reportium",
     description:
-      "Self-contained HTML test reports for Appium: one file, zero network calls, failure screenshots embedded, with run history and quality gates. Reads JUnit XML from any runner.",
+      "Published on npm as testreportium: self-contained HTML test reports for Appium in one file, zero network calls, failure screenshots embedded, with run history and quality gates. Reads JUnit XML from any runner.",
     stack: "JavaScript",
+    /*
+      Verified 2026-10-26: the registry lists testreportium at 0.2.1 with its
+      repository field pointing back at this repo, and the downloads API
+      reported 543 for the trailing month. That figure is NOT rendered from
+      here; the card fetches it live so it can never go stale.
+    */
+    npm: "testreportium",
   },
   {
     name: "qa-api-pilot",
