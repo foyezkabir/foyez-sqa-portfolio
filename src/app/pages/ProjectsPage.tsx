@@ -19,7 +19,7 @@ import { experiences } from "../components/Experience";
  * MODULE 6: /projects. The only structural addition to the site.
  *
  * WHY IT EXISTS. Featured Work shows four client products and Agents & Automation
- * shows six repositories, which between them leave the ten Shadhin products with
+ * shows eight repositories, which between them leave the ten Shadhin products with
  * nothing but a chip and a hover tooltip on the Experience card. Ten products is a
  * genuinely broad track record and it deserves to be readable.
  *
@@ -304,7 +304,7 @@ export function ProjectsPage() {
           reverse. On the home page the sections escalate how checkable each claim
           is, ending on third-party credentials. Here the reader has already
           clicked through from Featured Work wanting more, so the page opens on the
-          part that needs no trust at all: six repositories they can read.
+          part that needs no trust at all: eight repositories they can read.
         */}
         <section className="space-y-8">
           {/*
@@ -318,9 +318,12 @@ export function ProjectsPage() {
             count={repos.length}
           />
           {/*
-            Six cards divide evenly by 1, 2 and 3, so no card is ever left alone on
-            a last row at any width. That is why the count in Agents & Automation
-            is six, and the same arithmetic holds here.
+            EIGHT cards since 2026-10-26, and eight is still orphan-safe in this
+            grid: 2 columns wrap 2/2/2/2 and 3 columns wrap 3/3/2, no card alone
+            on a last row at any width. SEVEN WAS NOT: 7 is prime, so it orphans
+            in both 2 and 3 columns, which is exactly why appium-test-reportium
+            was added alongside Appium-Scripter rather than stopping at seven.
+            If a card is ever added or removed, redo this arithmetic first.
           */}
           <div className="grid auto-rows-fr grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {repos.map((repo) => (

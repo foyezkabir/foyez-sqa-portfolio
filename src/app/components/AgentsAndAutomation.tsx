@@ -8,20 +8,24 @@ import {
 } from "./ui/carousel";
 
 /**
- * Six real public repositories. Every name, URL, description and stack label here
- * was read out of the GitHub API and the repos' own READMEs, not retyped from
- * memory, because a wrong repo name sends a reader nowhere and this whole section
- * exists to be checked.
+ * Eight real public repositories. Every name, URL, description and stack label
+ * here was read out of the GitHub API and the repos' own READMEs, not retyped
+ * from memory, because a wrong repo name sends a reader nowhere and this whole
+ * section exists to be checked.
  *
  * This replaces the template section that shipped three INVENTED repos
  * (playwright-ai-helper, visual-regression-toolkit, api-contract-validator) with
  * invented star counts. Those never existed on the account.
  *
- * The account has 27 repos. The other 21 are 2021 to 2022 university coursework:
- * machine-learning notebooks, a forked disease-prediction project, and first-
- * website HTML. Showing those under a QA heading would work against the
- * positioning, so the six here are the QA-relevant ones with enough real content
- * to describe honestly.
+ * SIX BECAME EIGHT on 2026-10-26: Foyez asked for Appium-Scripter third, after
+ * QA-Scripter, and approved appium-test-reportium alongside it (see the note on
+ * that entry for why eight is also the grid-safe count).
+ *
+ * The account has 31 public repos at the 2026-10-26 count. The remainder are
+ * mostly 2021 to 2022 university coursework: machine-learning notebooks, a
+ * forked disease-prediction project, and first-website HTML. Showing those
+ * under a QA heading would work against the positioning, so the eight here are
+ * the QA-relevant ones with enough real content to describe honestly.
  *
  * Deliberately NOT included, and why:
  *   Playwright_practice_project actually contains the Black Pigeon automation
@@ -77,6 +81,34 @@ export const repos: Repo[] = [
     stack: "TypeScript",
   },
   {
+    /*
+      THIRD AT FOYEZ'S INSTRUCTION, 2026-10-26: "after qa-scripter". He asked
+      for it as "qa-appium scripter", but the repo on the account is
+      Appium-Scripter, and R5 says the name on the card matches GitHub
+      character for character, so that is what renders. The skill inside it is
+      called /qa-appium-scripter, which is likely where his name came from.
+    */
+    name: "Appium-Scripter",
+    url: "https://github.com/foyezkabir/Appium-Scripter",
+    description:
+      "Claude Code skill that generates Appium and WebdriverIO mobile suites for Android and iOS, native, React Native, Flutter or hybrid, with a stage gate that refuses to call a half-finished module done.",
+    stack: "TypeScript",
+  },
+  {
+    /*
+      ADDED IN THE SAME PASS, with Foyez's approval, for grid arithmetic as
+      much as content: seven cards orphan in both the two-column and the
+      three-column /projects grid (7 is prime), where eight wraps 2/2/2/2 and
+      3/3/2. It also pairs naturally with Appium-Scripter, whose suites it
+      reports on.
+    */
+    name: "appium-test-reportium",
+    url: "https://github.com/foyezkabir/appium-test-reportium",
+    description:
+      "Self-contained HTML test reports for Appium: one file, zero network calls, failure screenshots embedded, with run history and quality gates. Reads JUnit XML from any runner.",
+    stack: "JavaScript",
+  },
+  {
     name: "qa-api-pilot",
     url: "https://github.com/foyezkabir/qa-api-pilot",
     description:
@@ -120,7 +152,7 @@ export function AgentsAndAutomation() {
           </h2>
           {/*
             The subtitle is the point of the section. Everything above it on the
-            page is Foyez's own account of his work; these six are the part a
+            page is Foyez's own account of his work; these eight are the part a
             stranger can open and read without taking his word for anything.
           */}
           <p className="text-lg text-muted-foreground">
@@ -139,23 +171,26 @@ export function AgentsAndAutomation() {
 
           ui/carousel.tsx has since been rebuilt on CSS scroll-snap with no
           JavaScript slide measurement anywhere, which removes that whole class of
-          bug rather than patching one instance of it. Re-verified here: all six
-          cards reach full visibility, three runs at each of 390, 800, 1024, 1280
+          bug rather than patching one instance of it. Verified for six cards with
+          three runs at each of 390, 800, 1024, 1280 and 1920; re-verified for
+          eight on 2026-10-26 when the two Appium repos joined: last card reaches
+          full visibility and the arrows disable at both ends, at 390, 800, 1280
           and 1920.
 
-          Three visible at lg, so two sit behind the arrows. That ratio is what
-          makes a slider honest here: hiding two of six is a real affordance,
-          where hiding four of six would be a place content goes to die. Same
-          call, and the same reasoning, as Certifications.
+          Three visible at lg, so five sit behind the arrows with eight cards.
+          Less comfortable than the two-of-six it was when written, but the
+          mechanism is the same as Certifications and every card remains
+          reachable; /projects still lays all eight out at once for anyone who
+          wants them in one view.
 
           The equal-size requirement Foyez actually wanted is met more strongly
-          than the grid managed it. All six cards are now in ONE flex row, so
+          than the grid managed it. All eight cards are in ONE flex row, so
           flex stretch equalises every card against the single tallest one by
           construction. The grid needed auto-rows-fr to stop its two rows sizing
           independently, which was the "small big" he first reported.
 
           The card itself lives in RepoCard, because the /projects page in Module 6
-          renders the same six repositories. One copy of the card means the title
+          renders the same eight repositories. One copy of the card means the title
           reserve, the underscore wrap rule and the stretched-link pattern cannot
           drift apart between the two pages.
         */}

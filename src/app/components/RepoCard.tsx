@@ -108,7 +108,7 @@ export function RepoCard({ repo }: { repo: Repo }) {
           text-base, RAISED FROM text-sm 2026-08-11, in the same pass that raised
           ProjectCard. Not requested directly: Foyez asked for What I Bring and
           Featured Work to match, and a sweep of every card description afterwards
-          found these six repo cards still at 14px while the other fourteen on the
+          found these repo cards still at 14px while the other fourteen on the
           Projects page had moved to 16px.
 
           Left alone they would have been the only cards on the site with smaller
@@ -135,8 +135,8 @@ export function RepoCard({ repo }: { repo: Repo }) {
           {repo.stack}
 
           {/*
-            Renders only when a third-party report actually exists, so five of the
-            six cards show nothing here rather than an empty slot or a placeholder.
+            Renders only when a third-party report actually exists, so seven of the
+            eight cards show nothing here rather than an empty slot or a placeholder.
             z-20 lifts it above the stretched GitHub overlay so this link receives
             its own clicks.
           */}

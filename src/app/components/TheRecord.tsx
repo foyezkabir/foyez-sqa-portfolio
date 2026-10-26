@@ -36,7 +36,7 @@
  *
  *   PROJECTS AUTOMATED, restored after being cut for tile arithmetic. Six, and the
  *   wording is load bearing: this work sits in COMPANY repositories, not his public
- *   ones, so it is NOT the same six as the six public repos in Agents & Automation. The
+ *   ones, so it is NOT the same set as the eight public repos in Agents & Automation. The
  *   tile says "projects automated" and must never say "repositories", since that would
  *   send a reader to GitHub expecting code they cannot see.
  *
@@ -102,7 +102,7 @@ const stats = [
 
       "PROJECTS AUTOMATED", NEVER "REPOSITORIES", and this wording is load bearing. He
       confirmed this work sits in COMPANY repositories, not his public ones, so it is
-      NOT the same six as the six public repos in Agents & Automation. Anything hinting
+      NOT the same set as the eight public repos in Agents & Automation. Anything hinting
       at browsable code would send a reader to GitHub expecting to find something they
       cannot see, which is worse than making no claim at all.
 
