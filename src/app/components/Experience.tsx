@@ -102,6 +102,16 @@ export const experiences = [
           "Led end-to-end QA for two client products, owning test strategy, execution, and stakeholder communication from development through release.",
           "Drove PharmaZ247, a multi-tenant pharmacy ERP and telehealth platform, from MVP to market launch, testing across web, mobile, and desktop clients under DGDA pharmacy compliance requirements.",
           "Delivered LolerFlow, a UK LOLER compliance platform with simPro integration, including client-facing demos and sign-off milestones.",
+          /*
+            THE TWO VELACREW BULLETS ARE FOYEZ'S OWN WORDING, supplied 2026-10-26
+            and recorded in cv-data.txt, verbatim apart from dash substitution.
+            Deliberately "Tested" and "Performed", never "Led": he ruled out any
+            sole-QA or lead phrasing for this product, and the limits in
+            cv-data.txt also ban ticket numbers and any description of specific
+            findings, so the security line names the testing types and stops.
+          */
+          "Tested VelaCrew, an AI-agent project management platform where every teammate has a personal AI agent, covering agent-to-agent communication, task updates through agent proposals with human confirmation, and project boards imported from the Huly tracker and executed as team rounds.",
+          "Performed functional, multi-user, integration, and security testing on VelaCrew across dev and production, including adversarial testing of the AI agents themselves (prompt injection, destructive instructions, conflicting commands).",
           "Authored business and requirement documentation post-testing (SRS, FRD, RTM) to formalise scope and traceability for stakeholders.",
           "Designed and executed test cases in TestRail, tracking coverage and results through structured test execution cycles and reporting.",
           "Mentored one junior QA engineer, reviewing test cases and providing hands-on guidance on execution standards.",
@@ -132,6 +142,17 @@ export const experiences = [
         url: "",
         summary:
           "A multi-tenant SaaS platform for UK LOLER lifting-equipment inspection: assets, defects, certificates, audit packs and a simPro integration.",
+        tags: [],
+        platforms: [],
+      },
+      {
+        // Added 2026-10-26. No URL on purpose: Foyez approved no public link
+        // for this product, so the chip renders plain like the two unlinked
+        // Shadhin entries. The /projects card carries the full description.
+        name: "VelaCrew",
+        url: "",
+        summary:
+          "An AI-agent project management platform where every teammate has a personal AI agent, with agent proposals, human confirmation and Huly tracker sync.",
         tags: [],
         platforms: [],
       },
@@ -562,10 +583,34 @@ export function Experience() {
                     adding postJini as a tenth chip and turning NRBFS into a link kept
                     512 valid at 3+3+4, removing every link icon invalidated it, and
                     widening the container invalidated it again.
+
+                    RE-SOLVED A FOURTH TIME, 2026-10-26, when VelaCrew became
+                    TulipTech's fifth chip, AND THE CAP IS NOW PER COMPANY. At the
+                    shared 512 the five TulipTech chips (measured: 103+84+82+141+92,
+                    gap 8, 535 on one line) wrapped 4+1 and stranded Empathika alone
+                    across the whole 640 to 1024 band. Solving one cap for both
+                    sets leaves a single 6px-wide safe band, 428 to 434, which one
+                    chip rename would tip over, so each list now carries the cap
+                    solved for its own strings instead of sharing a compromise:
+
+                      TulipTech  sm:max-w-sm (384). Safe band is 285 to 433 for a
+                                 3+2 wrap, so 384 has about 50px of headroom above
+                                 and 99 below, and it is a plain Tailwind scale
+                                 value. Caps 434 to 534 orphan Empathika, and the
+                                 one-line answer needs 535, which the sm band
+                                 cannot deliver: at a 640 viewport the card only
+                                 gives the row 512.
+                      Shadhin    sm:max-w-lg (512), unchanged and still 4+4+2,
+                                 re-verified after the change.
+
+                    At lg both stay max-w-4xl (896): TulipTech's 535 fits one
+                    line, Shadhin wraps 7+3, no orphan in either.
                   */
                   <ul
                     aria-label={`Projects at ${exp.company}`}
-                    className="flex flex-col items-start gap-2 mt-5 sm:flex-row sm:flex-wrap sm:max-w-lg lg:max-w-4xl"
+                    className={`flex flex-col items-start gap-2 mt-5 sm:flex-row sm:flex-wrap lg:max-w-4xl ${
+                      exp.company === "TulipTech" ? "sm:max-w-sm" : "sm:max-w-lg"
+                    }`}
                   >
                     {exp.projects.map((project) => (
                       <li key={project.name}>

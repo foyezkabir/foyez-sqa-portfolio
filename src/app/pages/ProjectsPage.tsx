@@ -335,9 +335,26 @@ export function ProjectsPage() {
             meta={`SQA Engineer, ${tulipTech?.years ?? ""}`}
             count={projects.length}
           />
-          <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 gap-8">
+          {/*
+            THIS GRID CHANGED FROM TWO COLUMNS TO THREE when VelaCrew made the
+            group five cards on 2026-10-26, and the column count is arithmetic,
+            not taste. Five divides into no two-column grid without stranding a
+            single card on the last row, which is the orphan R4 bans outright.
+            Three columns wrap 3+2, balanced at every width where the grid is
+            active, and below lg the single column cannot orphan anything.
+
+            The step is at lg rather than md ON PURPOSE. At md a three-column
+            track inside this container is about 224px, far too narrow for these
+            cards, and a two-column md range would reintroduce the 2+2+1 orphan.
+            One column through the tablet range is the only orphan-free option
+            that keeps the cards readable.
+
+            Shadhin below stays two-column: ten divides by two and not by
+            three, so the two groups genuinely need different column counts.
+          */}
+          <div className="grid auto-rows-fr grid-cols-1 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
-              <ProjectCard key={project.title} project={project} />
+              <ProjectCard key={project.title} project={project} narrow />
             ))}
           </div>
         </section>

@@ -48,9 +48,13 @@
  *
  * THREE OF THESE FOUR STAND ON FOYEZ'S WORD. Only the products figure can be checked by
  * a reader, and that is why it is here rather than a fourth self-reported number:
- * Experience lists all fourteen by name, so anyone can count them without leaving the
+ * Experience lists all fifteen by name, so anyone can count them without leaving the
  * page. Mixing one verifiable figure with three reported ones is stronger than four of
  * the same kind, and it is the honest shape of the underlying evidence.
+ *
+ * FOURTEEN BECAME FIFTEEN on 2026-10-26 when VelaCrew joined the TulipTech list. This
+ * figure is a hand-typed copy of a count that lives in Experience, so the two move
+ * together or the tile lies: re-check it whenever a project chip is added or removed.
  *
  * NO ICONS AND NO COLOUR ON THE FIGURES. The reference tiles use gradient numerals; the
  * numbers here wear the plain foreground token, because a large figure is already the
@@ -110,10 +114,10 @@ const stats = [
     note: "Playwright, Cypress and Selenium",
   },
   {
-    value: "14",
+    value: "15",
     label: "Client products tested",
     /*
-      The one line here a reader can act on. Experience names all fourteen, so this
+      The one line here a reader can act on. Experience names all fifteen, so this
       says where to look rather than asking to be believed.
     */
     note: "All named in Experience below",

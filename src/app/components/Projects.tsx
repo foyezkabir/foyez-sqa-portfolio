@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  Bot,
   Building2,
   HeartHandshake,
   Rocket,
@@ -54,14 +55,27 @@ export type Project = {
 /*
   ORDER IS FOYEZ'S: leadership first. PharmaZ247 and LolerFlow are the two
   products he led end to end, and they are also the two with the strongest
-  outcomes, so they take the first row. StretchSense MDM and Empathika are
-  contribution-scale work and take the second.
+  outcomes, so they take the first row. VelaCrew, StretchSense MDM and Empathika
+  are contribution-scale work and follow.
 
   This is also the first time the View Project button becomes real anywhere on the
   site. It has been hidden on every card until now precisely because no card had a
   URL, and R6 says a control renders only when it has a destination.
+
+  VELACREW ADDED 2026-10-26, from facts Foyez supplied that day, recorded in
+  cv-data.txt under the TulipTech projects. Three limits he set explicitly:
+  no sole-QA or lead phrasing (LolerFlow keeps the end-to-end claim), no ticket
+  numbers or defect specifics anywhere on the site, and no product URL. The
+  testing surfaced security findings, so the card says security and adversarial
+  testing happened and deliberately stops there.
 */
-/* Exported for the /projects page, for the same single-source reason as `experiences`. */
+/*
+  ALL FIVE TulipTech client products, exported for the /projects page. The home
+  section renders `featuredProjects` below instead, because the Figma structure
+  fixes Featured Work at four cards (R14) and Foyez picked which four on
+  2026-10-26: PharmaZ247, LolerFlow, VelaCrew and Empathika. StretchSense MDM
+  appears on /projects only.
+*/
 export const projects: Project[] = [
   {
     title: "PharmaZ247",
@@ -94,6 +108,28 @@ export const projects: Project[] = [
     tags: ["Safety compliance", "Third-party integration", "SaaS", "simPro"],
   },
   {
+    title: "VelaCrew",
+    /*
+      Foyez's approved wording from 2026-10-26, recast into the card's
+      product-description slot. The full two-sentence copy he supplied lives
+      verbatim in cv-data.txt and in the Experience bullets; the card condenses
+      it the same way the PharmaZ247 card condenses its cv-data entry.
+    */
+    description:
+      "AI-agent project management platform where every team member has a personal AI agent: agents communicate with each other, task updates move through agent proposals with human confirmation, and project boards are imported from the Huly tracker and executed as team rounds.",
+    outcome: {
+      icon: Bot,
+      /*
+        "Adversarial AI testing" compresses his line "adversarial testing of
+        the AI agents themselves (prompt injection, destructive instructions,
+        conflicting commands)", which appears in full on the Experience card.
+        Deliberately NOT "Led" or "sole": he ruled that phrasing out.
+      */
+      text: "Functional, multi-user, integration, security and adversarial AI testing",
+    },
+    tags: ["AI agents", "Multi-user", "Huly integration"],
+  },
+  {
     title: "StretchSense MDM",
     description:
       "Enterprise XR device management platform, covering centralised device management, security and scalability.",
@@ -115,6 +151,18 @@ export const projects: Project[] = [
     url: "https://empathika.com/",
   },
 ];
+
+/*
+  THE HOME FOUR, DERIVED BY EXCLUSION rather than typed as a second list, so a
+  future edit to any shared card cannot leave the two pages disagreeing. Foyez
+  chose the set on 2026-10-26 when VelaCrew arrived: the two led products keep
+  the first row, VelaCrew and Empathika take the second, and StretchSense MDM
+  moves to /projects only. Order is inherited from `projects`, so his
+  leadership-first sequence holds here without being restated.
+*/
+export const featuredProjects: Project[] = projects.filter(
+  (project) => project.title !== "StretchSense MDM",
+);
 
 export function Projects() {
   return (
@@ -146,7 +194,7 @@ export function Projects() {
           quietly undone in a second file.
         */}
         <div className="grid auto-rows-fr grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project) => (
+          {featuredProjects.map((project) => (
             <ProjectCard key={project.title} project={project} />
           ))}
         </div>

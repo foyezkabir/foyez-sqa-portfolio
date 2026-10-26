@@ -9,7 +9,27 @@ import type { Project } from "./Projects";
  * element order below is the fix for a measured R3 break, which is exactly the
  * kind of thing that gets silently undone in a second copy.
  */
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({
+  project,
+  narrow = false,
+}: {
+  project: Project;
+  /**
+   * For the three-column grid on /projects, added 2026-10-26 when VelaCrew made
+   * the TulipTech group five cards. The default outcome reserve below was
+   * measured for two-column tracks (329px at the md floor, 560px at lg), and a
+   * three-column lg track is only about 362px: the longest outcome sentences
+   * need three lines there, so the default two-line lg reserve would misalign
+   * the descriptions across a row, the exact R3 break the reserve exists to
+   * prevent.
+   *
+   * The narrow variant reserves three lines at lg and NOTHING below it, because
+   * that grid is a single column until lg and a one-column grid has no row
+   * neighbour to align with: a reserve there is pure dead space under every
+   * one-line outcome on a 700px-wide card.
+   */
+  narrow?: boolean;
+}) {
   const OutcomeIcon = project.outcome.icon;
 
   return (
@@ -88,7 +108,13 @@ export function ProjectCard({ project }: { project: Project }) {
             items-start with mt-0.5 on the glyph, so on a wrapped sentence the icon
             stays on the first line instead of centring itself against the block.
           */}
-          <div className="flex min-h-[3.75rem] items-start gap-2 text-sm text-blue-400 lg:min-h-[2.5rem]">
+          <div
+            className={
+              narrow
+                ? "flex items-start gap-2 text-sm text-blue-400 lg:min-h-[3.75rem]"
+                : "flex min-h-[3.75rem] items-start gap-2 text-sm text-blue-400 lg:min-h-[2.5rem]"
+            }
+          >
             <OutcomeIcon className="mt-0.5 w-4 h-4 shrink-0" aria-hidden />
             <span>{project.outcome.text}</span>
           </div>
