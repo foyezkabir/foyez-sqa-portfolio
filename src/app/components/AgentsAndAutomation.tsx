@@ -17,9 +17,10 @@ import {
  * (playwright-ai-helper, visual-regression-toolkit, api-contract-validator) with
  * invented star counts. Those never existed on the account.
  *
- * SIX BECAME EIGHT on 2026-10-26: Foyez asked for Appium-Scripter third, after
+ * SIX BECAME EIGHT on 2026-10-26: Foyez asked for Appium-Scripter after
  * QA-Scripter, and approved appium-test-reportium alongside it (see the note on
- * that entry for why eight is also the grid-safe count).
+ * that entry for why eight is also the grid-safe count). Later the same day he
+ * set the full order; see the note on the array.
  *
  * The account has 31 public repos at the 2026-10-26 count. The remainder are
  * mostly 2021 to 2022 university coursework: machine-learning notebooks, a
@@ -77,15 +78,16 @@ export type Repo = {
   npm?: string;
 };
 
-/* Exported for the /projects page, for the same single-source reason as `experiences`. */
+/*
+  Exported for the /projects page, for the same single-source reason as
+  `experiences`.
+
+  THE ORDER IS FOYEZ'S, set 2026-10-26, replacing the AG-QREW-first order from
+  earlier the same day: QA-Scripter leads, then the two Appium repos, then
+  qa-api-pilot, then AG-QREW, with the remaining three keeping their relative
+  order at the back. Do not re-sort.
+*/
 export const repos: Repo[] = [
-  {
-    name: "AG-QREW",
-    url: "https://github.com/foyezkabir/AG-QREW",
-    description:
-      "Agentic QREW. Five agents coordinate through a shared task list to run a whole sprint cycle: test cases into TestRail, Playwright specs that run, bugs filed, and a signed-off report.",
-    stack: "Claude Code agents",
-  },
   {
     name: "QA-Scripter",
     url: "https://github.com/foyezkabir/QA-Scripter",
@@ -95,8 +97,8 @@ export const repos: Repo[] = [
   },
   {
     /*
-      THIRD AT FOYEZ'S INSTRUCTION, 2026-10-26: "after qa-scripter". He asked
-      for it as "qa-appium scripter", but the repo on the account is
+      ADDED 2026-10-26 at Foyez's instruction, directly after QA-Scripter. He
+      asked for it as "qa-appium scripter", but the repo on the account is
       Appium-Scripter, and R5 says the name on the card matches GitHub
       character for character, so that is what renders. The skill inside it is
       called /qa-appium-scripter, which is likely where his name came from.
@@ -109,11 +111,11 @@ export const repos: Repo[] = [
   },
   {
     /*
-      ADDED IN THE SAME PASS, with Foyez's approval, for grid arithmetic as
-      much as content: seven cards orphan in both the two-column and the
-      three-column /projects grid (7 is prime), where eight wraps 2/2/2/2 and
-      3/3/2. It also pairs naturally with Appium-Scripter, whose suites it
-      reports on.
+      ADDED IN THE SAME PASS as Appium-Scripter, with Foyez's approval, for
+      grid arithmetic as much as content: seven cards orphan in both the
+      two-column and the three-column /projects grid (7 is prime), where eight
+      wraps 2/2/2/2 and 3/3/2. It also pairs naturally with Appium-Scripter,
+      whose suites it reports on, which is why it sits directly after it.
     */
     name: "appium-test-reportium",
     url: "https://github.com/foyezkabir/appium-test-reportium",
@@ -134,6 +136,13 @@ export const repos: Repo[] = [
     description:
       "A reusable Postman and Newman scaffold for any REST API, driven by four Claude Code agents, with nothing hardcoded to one project.",
     stack: "Python",
+  },
+  {
+    name: "AG-QREW",
+    url: "https://github.com/foyezkabir/AG-QREW",
+    description:
+      "Agentic QREW. Five agents coordinate through a shared task list to run a whole sprint cycle: test cases into TestRail, Playwright specs that run, bugs filed, and a signed-off report.",
+    stack: "Claude Code agents",
   },
   {
     name: "playwright-api-automation-python",
