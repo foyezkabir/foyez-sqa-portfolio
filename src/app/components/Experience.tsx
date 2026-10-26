@@ -146,11 +146,12 @@ export const experiences = [
         platforms: [],
       },
       {
-        // Added 2026-10-26. No URL on purpose: Foyez approved no public link
-        // for this product, so the chip renders plain like the two unlinked
-        // Shadhin entries. The /projects card carries the full description.
+        // Added 2026-10-26. The URL arrived later the same day; it renders
+        // nowhere in this section (names only, by Foyez's instruction below)
+        // and is kept as data the same way the other linked entries keep
+        // theirs. The /projects card carries the link and full description.
         name: "VelaCrew",
-        url: "",
+        url: "https://velacrew.ai/",
         summary:
           "An AI-agent project management platform where every teammate has a personal AI agent, with agent proposals, human confirmation and Huly tracker sync.",
         tags: [],

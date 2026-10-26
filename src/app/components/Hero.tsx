@@ -35,11 +35,16 @@ import { GrainOverlay } from "./GrainOverlay";
 
   EIGHT CHIPS NOW, NOT SEVEN, which invalidates the old wrap solution. The bands
   below were re-derived from scratch for the new set; see the note on the row.
+
+  NINE CHIPS SINCE 2026-10-26: Foyez asked for Appium directly after Playwright,
+  the day he added it to his toolset (recorded in cv-data.txt, superseding the
+  July note that automation was web only). Bands re-derived again; see the row.
 */
 const techStack = [
   "AI Agents",
   "MCP",
   "Playwright",
+  "Appium",
   "Python",
   "JavaScript",
   "Postman",
@@ -480,41 +485,45 @@ export function Hero() {
             that strands one chip alone is an R4 orphan whether it is centred or
             not.
 
-            RE-SOLVED FOR EIGHT CHIPS, replacing the seven-chip bands that were
-            here before. Python was added and TypeScript became JavaScript, so
-            every width this depends on moved and the old table was void.
+            RE-SOLVED FOR NINE CHIPS, the third re-derivation, when Appium joined
+            after Playwright on 2026-10-26 at Foyez's request.
 
             Measured widths, gap 8px: AI Agents 84.3, MCP 54.6, Playwright 90.9,
-            Python 69.8, JavaScript 87.4, Postman 80.6, TestRail 72.4, CI/CD 60.3.
-            Eight chips need 656.3px to sit on one line.
+            Appium 74.9, Python 69.8, JavaScript 87.4, Postman 80.6, TestRail
+            72.4, CI/CD 60.3. Nine chips need 739.2px to sit on one line.
 
-            Greedy wrap simulated over every cap from 180 to 780. Only two orphan
-            bands exist, which is a narrower risk than the three the seven-chip set
-            had:
+            Greedy wrap simulated over every cap from 180 to 820. Three orphan
+            bands this time:
 
                 cap            wrap
-                >= 658         8 on one line
-                588 to 657     7 / 1     <- orphan
-                520 to 587     6 / 2
-                424 to 519     5 / 3
-                326 to 423     4 / 4
-                324 to 325     4 / 3 / 1 <- orphan
-                248 to 323     3 / 3 / 2  (and 3/2/3 at the low end)
-                180 to 247     2 / 2 / 2 / 2
+                >= 740         9 on one line
+                671 to 739     8 / 1         <- orphan
+                591 to 670     7 / 2
+                502 to 590     6 / 3
+                407 to 501     5 / 4
+                403 to 406     4 / 5
+                335 to 402     4 / 4 / 1     <- orphan
+                329 to 334     4 / 3 / 2
+                249 to 328     3 / 3 / 3
+                230 to 248     2 / 2 / 2 / 3  (and 3/2/2/2 at the top)
+                180 to 229     2 / 2 / 2 / 2 / 1 <- orphan
 
-            THE EXISTING CAPS SURVIVED THE CHANGE, verified rather than assumed:
-            256px lands in 3/3/2 and 432px lands in 5/3, both safe. They are kept
-            rather than retuned, since a cap that already sits mid-band is better
-            than a new number chosen to look tidy.
+            THE EXISTING CAPS SURVIVED AGAIN, verified live rather than assumed:
+            256px lands in 3/3/3 and 432px lands in 5/4, both mid-band, both
+            balanced. Rendered wraps confirmed at 390 (3/3/3), 800 (5/4), 1280
+            and 1920 (one line).
 
             From lg the row is uncapped and inherits the hero copy's max-w-3xl,
-            768px, which clears 658 and puts all eight on one line. That is only
-            110px of headroom above the 7/1 band, so if the hero measure is ever
-            narrowed below 658 this row needs an explicit lg cap instead.
+            768px, which clears 739.2 and puts all nine on one line, BUT THE
+            HEADROOM IS NOW 28.8px, down from 110. A tenth chip, or renaming any
+            chip more than a couple of characters longer, cannot fit one line in
+            768 and will land in the 8/1 orphan band: at that point this row
+            needs an explicit lg cap in a safe band (591 to 670 or 502 to 590)
+            instead of lg:max-w-none.
 
             IF A CHIP IS ADDED, RENAMED OR REORDERED, re-run that simulation. The
             bands are a function of the exact chip widths, so they move. This is
-            the second time they have had to.
+            the third time they have had to.
           */}
           <div className="mx-auto flex max-w-[256px] flex-wrap justify-center gap-2 pt-2 sm:max-w-[432px] lg:max-w-none">
             {techStack.map((tech) => (

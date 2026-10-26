@@ -45,7 +45,7 @@ export type Project = {
   /** Technical and domain scope, so the card carries keywords without prose. */
   tags: string[];
   /**
-   * Only Empathika has one. Three of the four are client platforms with no
+   * Empathika and VelaCrew have one. The others are client platforms with no
    * public URL, so their View Project button is not rendered at all rather than
    * rendered pointing nowhere.
    */
@@ -68,6 +68,10 @@ export type Project = {
   numbers or defect specifics anywhere on the site, and no product URL. The
   testing surfaced security findings, so the card says security and adversarial
   testing happened and deliberately stops there.
+
+  THE THIRD LIMIT WAS LIFTED later the same day: Foyez supplied
+  https://velacrew.ai/ and asked for it on the project, so the card now carries
+  a View Project button like Empathika's. The first two limits still stand.
 */
 /*
   ALL FIVE TulipTech client products, exported for the /projects page. The home
@@ -128,6 +132,7 @@ export const projects: Project[] = [
       text: "Functional, multi-user, integration, security and adversarial AI testing",
     },
     tags: ["AI agents", "Multi-user", "Huly integration"],
+    url: "https://velacrew.ai/",
   },
   {
     title: "StretchSense MDM",
