@@ -13,18 +13,28 @@ import type { Repo } from "./AgentsAndAutomation";
  */
 export function RepoCard({ repo }: { repo: Repo }) {
   /*
-    Live last-month download count for a card published on npm. Fetched from
+    Live ALL-TIME download count for a card published on npm. Fetched from
     npm's public downloads API in the visitor's browser, so the figure is
     npm's at view time, never a typed-in copy that goes stale: the same
     reasoning that made the SonarCloud slot a link instead of a number. On any
     failure the state stays null and the pill renders as a bare "npm" link,
     because a missing number is honest and a stale one is not (R5).
+
+    ALL-TIME, NOT LAST-MONTH, since 2026-10-26: the pill said "npm, 543
+    downloads/month" and Foyez rejected the wording, asking for plain
+    "543 downloads" with the link. A bare "N downloads" is only true as a
+    lifetime total, so the range starts at 2026-09-01, before testreportium's
+    first publish (2026-09-28), and ends today. The API caps one range query
+    at 18 months, so from about 2028-03 this request will start failing and
+    the pill will fall back to "npm": the fix then is to sum chained
+    18-month range queries.
   */
   const [npmDownloads, setNpmDownloads] = useState<number | null>(null);
   useEffect(() => {
     if (!repo.npm) return;
     let cancelled = false;
-    fetch(`https://api.npmjs.org/downloads/point/last-month/${repo.npm}`)
+    const today = new Date().toISOString().slice(0, 10);
+    fetch(`https://api.npmjs.org/downloads/point/2026-09-01:${today}/${repo.npm}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!cancelled && data && typeof data.downloads === "number") {
@@ -192,9 +202,11 @@ export function RepoCard({ repo }: { repo: Repo }) {
           {/*
             The npm pill. Same construction as the quality-report pill above:
             a real outbound link above the stretched overlay, icon plus words,
-            nothing resting on colour. The download count inside it is the
-            live fetch at the top of this component and simply does not
-            appear until it has loaded.
+            nothing resting on colour. The text is the live all-time count
+            from the fetch at the top of this component, as plain
+            "543 downloads" at Foyez's instruction (he rejected
+            "npm, 543 downloads/month" on sight); until the fetch resolves,
+            or if it fails, the pill says "npm" so the link stays labelled.
           */}
           {repo.npm && (
             <a
@@ -204,9 +216,9 @@ export function RepoCard({ repo }: { repo: Repo }) {
               aria-label={`${repo.npm} on npm, opens in a new tab`}
               className="relative z-20 ml-auto inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/50 px-2 py-0.5 text-foreground/80 no-underline transition-colors hover:border-blue-400/50 hover:text-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60"
             >
-              npm
-              {npmDownloads !== null &&
-                `, ${npmDownloads.toLocaleString("en-US")} downloads/month`}
+              {npmDownloads !== null
+                ? `${npmDownloads.toLocaleString("en-US")} downloads`
+                : "npm"}
               <ExternalLink
                 className="h-3 w-3 shrink-0 opacity-60"
                 aria-hidden
